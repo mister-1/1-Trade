@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>1-Trade Radar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./assets/1-trade-logo.png">
+    <link rel="apple-touch-icon" href="./assets/1-trade-logo.png">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Main navigation">
+        <div class="brand">
+          <div class="brand-mark">
+            <img src="./assets/1-trade-logo.png" alt="1-Trade Stock & Gold Radar logo">
+          </div>
+          <div>
+            <strong>1-Trade</strong>
+            <span>Stock & Gold Radar</span>
+          </div>
+        </div>
+
+        <nav class="nav-list">
+          <button class="nav-item active" type="button" title="Radar">
+            <span class="nav-icon">⌁</span>
+            <span>Radar</span>
+          </button>
+          <button class="nav-item" type="button" title="Watchlist">
+            <span class="nav-icon">◇</span>
+            <span>Watchlist</span>
+          </button>
+          <button class="nav-item" type="button" title="News">
+            <span class="nav-icon">◌</span>
+            <span>News</span>
+          </button>
+          <button class="nav-item" type="button" title="Telegram">
+            <span class="nav-icon">↗</span>
+            <span>Alerts</span>
+          </button>
+          <a class="nav-item" href="./settings.html" title="Backend Setup">
+            <span class="nav-icon">⚙</span>
+            <span>Setup</span>
+          </a>
+        </nav>
+
+        <section class="risk-box" aria-label="Risk notice">
+          <span>Risk Mode</span>
+          <strong>คุมความเสี่ยงก่อนกำไร</strong>
+          <p>ระบบนี้เป็นตัวช่วยวิเคราะห์ ไม่ใช่การรับประกันผลตอบแทน</p>
+        </section>
+      </aside>
+
+      <main class="dashboard">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Realtime Trading Intelligence</p>
+            <h1>1-Trade วิเคราะห์หุ้นสหรัฐและทองคำระยะสั้น</h1>
+          </div>
+          <div class="top-actions">
+            <span class="data-mode" id="dataModeBadge">Mock Data</span>
+            <button id="refreshButton" class="icon-button" type="button" title="รีเฟรชข้อมูล">⟳</button>
+            <button id="telegramButton" class="primary-button" type="button">ทดสอบ Telegram Alert</button>
+          </div>
+        </header>
+
+        <section class="market-strip" aria-label="Market overview">
+          <article>
+            <span>NASDAQ</span>
+            <strong id="nasdaqValue">19,840.22</strong>
+            <em class="up" id="nasdaqChange">+0.82%</em>
+          </article>
+          <article>
+            <span>S&P 500</span>
+            <strong id="spValue">6,210.44</strong>
+            <em class="up" id="spChange">+0.38%</em>
+          </article>
+          <article>
+            <span>VIX</span>
+            <strong id="vixValue">14.92</strong>
+            <em class="down" id="vixChange">-2.14%</em>
+          </article>
+          <article class="gold-card">
+            <span>GOLD SPOT</span>
+            <strong id="goldValue">$2,356.40</strong>
+            <em class="up" id="goldChange">+0.46%</em>
+          </article>
+          <article>
+            <span>Market Mood</span>
+            <strong id="moodValue">Risk-on</strong>
+            <em id="moodChange">Tech leading</em>
+          </article>
+        </section>
+
+        <section class="workspace-grid">
+          <section class="watch-panel" aria-label="US stock and gold watchlist">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Live Watchlist</p>
+                <h2>สินทรัพย์ที่ระบบกำลังสแกน</h2>
+              </div>
+              <div class="segmented" role="group" aria-label="Filter stocks">
+                <button class="active" type="button" data-filter="all">ทั้งหมด</button>
+                <button type="button" data-filter="buy">น่าเข้า</button>
+                <button type="button" data-filter="risk">เสี่ยงสูง</button>
+              </div>
+            </div>
+            <div class="stock-table" id="stockTable"></div>
+          </section>
+
+          <aside class="signal-panel" aria-label="Selected trade setup">
+            <div class="ticker-orb" id="selectedTicker">NVDA</div>
+            <p class="eyebrow">Trade Setup 1-3 วัน</p>
+            <h2 id="selectedName">NVIDIA Corporation</h2>
+            <div class="score-ring" aria-label="Signal score">
+              <span id="scoreValue">86</span>
+              <small>Signal Score</small>
+            </div>
+            <dl class="setup-grid">
+              <div>
+                <dt>จุดเข้า / Entry</dt>
+                <dd id="entryValue">$128.50</dd>
+              </div>
+              <div>
+                <dt>ขายทำกำไร / Take Profit</dt>
+                <dd id="targetValue">$133.00 / $136.00</dd>
+              </div>
+              <div>
+                <dt>ตัดขาดทุน / Stop Loss</dt>
+                <dd id="stopValue">$124.80</dd>
+              </div>
+              <div>
+                <dt>ความเสี่ยง / Risk</dt>
+                <dd id="riskValue">ปานกลาง</dd>
+              </div>
+            </dl>
+            <p class="setup-reason" id="setupReason">ราคาอยู่เหนือ EMA20/50, volume สูงกว่าค่าเฉลี่ย และข่าว AI demand ยังหนุนกลุ่ม semiconductor</p>
+          </aside>
+        </section>
+
+        <section class="insight-grid">
+          <section class="news-panel" aria-label="Thai market news">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">News Intelligence</p>
+                <h2>ข่าวล่าสุดสรุปภาษาไทย</h2>
+              </div>
+              <span class="live-pill">LIVE</span>
+            </div>
+            <div id="newsFeed" class="news-feed"></div>
+          </section>
+
+          <section class="alert-panel" aria-label="Telegram alert preview">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Telegram Preview</p>
+                <h2>ข้อความแจ้งเตือน</h2>
+              </div>
+            </div>
+            <div class="phone-frame">
+              <div class="telegram-bubble" id="telegramPreview"></div>
+            </div>
+          </section>
+
+          <section class="engine-panel" aria-label="Analysis engine">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Analysis Engine</p>
+                <h2>โมเดลให้คะแนน</h2>
+              </div>
+            </div>
+            <div class="engine-bars">
+              <label>
+                Technical
+                <span><i id="technicalBar"></i></span>
+              </label>
+              <label>
+                News Impact
+                <span><i id="newsBar"></i></span>
+              </label>
+              <label>
+                Market Trend
+                <span><i id="marketBar"></i></span>
+              </label>
+              <label>
+                Risk Control
+                <span><i id="riskBar"></i></span>
+              </label>
+            </div>
+          </section>
+        </section>
+
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="./app.js"></script>
+  </body>
+</html>

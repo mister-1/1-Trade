@@ -251,6 +251,19 @@ button {
   background: rgba(255, 191, 71, 0.08);
 }
 
+.version-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid rgba(54, 216, 255, 0.34);
+  border-radius: 8px;
+  color: #dffaff;
+  font-size: 0.78rem;
+  font-weight: 900;
+  background: rgba(54, 216, 255, 0.1);
+}
+
 .market-strip,
 .workspace-grid,
 .insight-grid {
@@ -667,14 +680,100 @@ button {
   opacity: 1;
 }
 
+.creator-credit {
+  position: fixed;
+  right: 16px;
+  bottom: 14px;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  color: #e9fffa;
+  font-size: 0.74rem;
+  font-weight: 800;
+  background: rgba(5, 14, 15, 0.84);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(14px);
+}
+
+.creator-credit span + span {
+  color: var(--cyan);
+}
+
 .settings-panel {
   margin-top: 16px;
+}
+
+.release-panel {
+  margin-top: 16px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(20px);
 }
 
 .settings-grid {
   display: grid;
   grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1fr) minmax(280px, 0.8fr);
   gap: 16px;
+}
+
+.release-list {
+  display: grid;
+  gap: 12px;
+}
+
+.release-item {
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(54, 216, 255, 0.08), rgba(53, 242, 154, 0.04)),
+    rgba(255, 255, 255, 0.035);
+}
+
+.release-item header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.release-item header span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 9px;
+  border-radius: 8px;
+  color: #03110b;
+  font-size: 0.78rem;
+  font-weight: 900;
+  background: var(--green);
+}
+
+.release-item header strong {
+  color: var(--text);
+}
+
+.release-item time {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.release-item ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 18px;
+  color: #d7e8e4;
+  line-height: 1.55;
 }
 
 .settings-card {
@@ -869,6 +968,11 @@ button {
   .stock-row .signal-cell {
     display: none;
   }
+
+  .creator-credit {
+    right: 10px;
+    bottom: 10px;
+  }
 }
 
 @media (max-width: 520px) {
@@ -887,5 +991,10 @@ button {
   .segmented button {
     flex: 1;
     padding: 0 8px;
+  }
+
+  .release-item header {
+    grid-template-columns: 1fr;
+    align-items: start;
   }
 }

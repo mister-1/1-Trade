@@ -16,6 +16,8 @@
 - Telegram alert preview
 - Engine ให้คะแนนจาก technical, news, market trend และ risk control
 - หน้า `settings.html` สำหรับ Backend Setup แยกจากหน้า monitor เพื่อบันทึก Telegram Bot, Chat ID, market data API, gold API, news API และ AI summary API ในเครื่อง
+- แสดง system version และเครดิต `create by mr.1` บนทุกหน้า
+- มี Release Notes ในหน้า Settings สำหรับติดตามการเปลี่ยนแปลงแต่ละเวอร์ชัน
 
 ## ขั้นต่อไปสำหรับ production
 

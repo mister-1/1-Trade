@@ -1,0 +1,66 @@
+const ONE_TRADE_META = {
+  version: "1.0.2",
+  createdBy: "mr.1",
+  updatedAt: "2026-07-04",
+  releaseNotes: [
+    {
+      version: "1.0.2",
+      date: "2026-07-04",
+      title: "เพิ่มเครดิตผู้สร้างและระบบเวอร์ชัน",
+      notes: [
+        "เพิ่มข้อความ create by mr.1 ที่มุมขวาล่างของทุกหน้า",
+        "เพิ่มการแสดงเลขเวอร์ชันระบบบนหน้า Monitor และ Settings",
+        "เพิ่ม Release Notes ในหน้า Settings เพื่อบันทึกสิ่งที่ปรับในแต่ละเวอร์ชัน",
+      ],
+    },
+    {
+      version: "1.0.1",
+      date: "2026-07-03",
+      title: "ปรับความอ่านง่ายของ Watchlist",
+      notes: [
+        "ปรับสีตัวอักษรในกล่องชื่อหุ้นและราคาให้ contrast สูงขึ้น",
+        "ปรับ ticker chip ให้ไม่กลืนกับพื้นหลังและรองรับ XAUUSD ได้ดีขึ้น",
+      ],
+    },
+    {
+      version: "1.0.0",
+      date: "2026-07-03",
+      title: "เปิดตัว 1-Trade MVP",
+      notes: [
+        "สร้าง dashboard สำหรับหุ้นสหรัฐและทองคำ",
+        "เพิ่มหน้า Settings สำหรับ Telegram และ API keys",
+        "Deploy ขึ้น Cloudflare Pages ที่ https://1-trade.pages.dev/",
+      ],
+    },
+  ],
+};
+
+function hydrateSystemMeta() {
+  document.querySelectorAll("[data-app-version]").forEach((element) => {
+    element.textContent = `v${ONE_TRADE_META.version}`;
+  });
+
+  document.querySelectorAll("[data-created-by]").forEach((element) => {
+    element.textContent = `create by ${ONE_TRADE_META.createdBy}`;
+  });
+
+  const releaseList = document.querySelector("#releaseNotesList");
+  if (!releaseList) return;
+
+  releaseList.innerHTML = ONE_TRADE_META.releaseNotes
+    .map((release) => `
+      <article class="release-item">
+        <header>
+          <span>v${release.version}</span>
+          <strong>${release.title}</strong>
+          <time>${release.date}</time>
+        </header>
+        <ul>
+          ${release.notes.map((note) => `<li>${note}</li>`).join("")}
+        </ul>
+      </article>
+    `)
+    .join("");
+}
+
+hydrateSystemMeta();

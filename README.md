@@ -13,7 +13,7 @@
 - Watchlist พร้อมราคาและสัญญาณ โดยใช้ live data เมื่อ Cloudflare Secrets พร้อม และ fallback เป็น demo data เมื่อยังไม่ได้ตั้งค่า
 - Trade setup: จุดเข้า, จุดขายทำกำไร, จุดตัดขาดทุน
 - ข่าวล่าสุดจาก Marketaux พร้อมสรุปภาษาไทยแบบอ่านง่าย
-- Telegram alert preview และ backend endpoint สำหรับส่งข้อความจริง
+- Telegram alert preview พร้อมข้อความรูปแบบ production และ backend endpoint สำหรับส่งข้อความจริง
 - Engine ให้คะแนนจาก technical, news, market trend และ risk control
 - หน้า `settings.html` สำหรับ Backend Setup แยกจากหน้า monitor พร้อมรายชื่อ Cloudflare Secrets ที่ต้องตั้งใน production
 - Cloudflare Pages Functions:

@@ -1,8 +1,18 @@
 const ONE_TRADE_META = {
-  version: "1.0.4",
+  version: "1.0.5",
   createdBy: "mr.1",
-  updatedAt: "2026-07-04",
+  updatedAt: "2026-07-05",
   releaseNotes: [
+    {
+      version: "1.0.5",
+      date: "2026-07-05",
+      title: "ปรับ Telegram Alert และคำบน Production",
+      notes: [
+        "ปรับข้อความ Telegram Alert ให้มีไอคอนและโครงสร้างที่อ่านง่ายขึ้นบนมือถือ",
+        "เปลี่ยนปุ่มจากทดสอบ Telegram Alert เป็นส่ง Telegram Alert เพื่อให้เหมาะกับ production",
+        "เปลี่ยนสถานะ Demo Fallback เป็น Fallback Data และ Standby Data เพื่อลดความสับสนของผู้ใช้",
+      ],
+    },
     {
       version: "1.0.4",
       date: "2026-07-04",

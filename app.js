@@ -220,7 +220,7 @@ function setDataMode(mode, updatedAt) {
     return;
   }
 
-  badge.textContent = mode === "error" ? "Demo Fallback" : "Demo Data";
+  badge.textContent = mode === "error" ? "Fallback Data" : "Standby Data";
   badge.classList.remove("ready");
 }
 
@@ -335,20 +335,26 @@ function renderSelectedStock() {
 }
 
 function buildTelegramMessage(stock) {
-  return `1-Trade Alert: ${stock.ticker}
+  const directionIcon = stock.change >= 0 ? "🟢" : "🔴";
+  const signalIcon = stock.signal === "buy" ? "🚀" : stock.signal === "risk" ? "⚠️" : "👀";
+  const riskIcon = stock.risk === "สูง" ? "🔥" : "🛡️";
+  const changeText = `${stock.change >= 0 ? "+" : ""}${stock.change.toFixed(2)}%`;
 
-มุมมอง: ${signalLabel(stock.signal)}
-คะแนนสัญญาณ: ${stock.score}/100
+  return `📈 1-Trade Alert | ${stock.ticker}
+${signalIcon} ${signalLabel(stock.signal)} · Score ${stock.score}/100
+${directionIcon} Price: ${formatUsd(stock.price)} (${changeText})
 
-แผนเทรด 1-3 วัน
-จุดเข้า: ${formatUsd(stock.entry)}
-ขายทำกำไร: ${formatUsd(stock.targets[0])} / ${formatUsd(stock.targets[1])}
-ตัดขาดทุน: ${formatUsd(stock.stop)}
-ความเสี่ยง: ${stock.risk}
+━━━━━━━━━━━━━━
+🎯 แผนเทรด 1-3 วัน
+• Entry / จุดเข้า: ${formatUsd(stock.entry)}
+• Take Profit / ขายทำกำไร: ${formatUsd(stock.targets[0])} / ${formatUsd(stock.targets[1])}
+• Stop Loss / ตัดขาดทุน: ${formatUsd(stock.stop)}
+• Risk / ความเสี่ยง: ${riskIcon} ${stock.risk}
 
-เหตุผล: ${stock.reason}
+🧠 เหตุผลหลัก
+${stock.reason}
 
-หมายเหตุ: เป็นข้อมูลช่วยวิเคราะห์ ไม่ใช่การรับประกันผลตอบแทน`;
+⚖️ หมายเหตุ: ใช้เป็นข้อมูลช่วยวิเคราะห์เท่านั้น ไม่ใช่การรับประกันผลตอบแทน`;
 }
 
 function simulateTick() {

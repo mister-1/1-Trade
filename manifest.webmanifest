@@ -1,0 +1,25 @@
+{
+  "name": "1-Trade Stock & Gold Radar",
+  "short_name": "1-Trade",
+  "description": "Realtime stock and gold trading dashboard for short-term monitoring.",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#07100f",
+  "theme_color": "#07100f",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/assets/1-trade-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/1-trade-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

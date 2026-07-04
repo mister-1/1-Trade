@@ -2,20 +2,26 @@
 <html lang="th">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#07100f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="1-Trade">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>1-Trade Setup</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="./assets/1-trade-logo.png">
+    <link rel="apple-touch-icon" href="./assets/1-trade-logo.png">
+    <link rel="manifest" href="./manifest.webmanifest">
     <link rel="stylesheet" href="./styles.css">
   </head>
   <body>
     <div class="app-shell">
       <aside class="sidebar" aria-label="Main navigation">
         <div class="brand">
-          <div class="brand-mark" aria-label="1-Trade logo">
-            <span class="logo-one">1</span>
-            <span class="logo-pulse"></span>
+          <div class="brand-mark">
+            <img src="./assets/1-trade-logo.png" alt="1-Trade Stock & Gold Radar logo">
           </div>
           <div>
             <strong>1-Trade</strong>
@@ -60,7 +66,7 @@
             <h1>ตั้งค่าข้อมูลจริงและ Telegram สำหรับ 1-Trade</h1>
           </div>
           <div class="top-actions">
-            <span class="version-pill" data-app-version>v1.0.2</span>
+            <span class="version-pill" data-app-version>v1.0.3</span>
             <span class="data-mode" id="dataModeBadge">Mock Data</span>
             <a class="primary-button nav-link-button" href="./index.html">กลับหน้า Monitor</a>
           </div>
@@ -179,7 +185,7 @@
               <p class="eyebrow">Release Notes</p>
               <h2>บันทึกการเปลี่ยนแปลงเวอร์ชัน</h2>
             </div>
-            <span class="live-pill" data-app-version>v1.0.2</span>
+            <span class="live-pill" data-app-version>v1.0.3</span>
           </div>
           <div class="release-list" id="releaseNotesList"></div>
         </section>
@@ -189,7 +195,7 @@
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <div class="creator-credit" aria-label="System credit">
       <span data-created-by>create by mr.1</span>
-      <span data-app-version>v1.0.2</span>
+      <span data-app-version>v1.0.3</span>
     </div>
     <script src="./system-meta.js"></script>
     <script src="./settings.js"></script>

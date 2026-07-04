@@ -27,6 +27,7 @@ html {
 body {
   min-height: 100vh;
   margin: 0;
+  padding-bottom: env(safe-area-inset-bottom);
   color: var(--text);
   font-family: "Inter", "Noto Sans Thai", system-ui, sans-serif;
   background:
@@ -162,6 +163,7 @@ button {
 
 .dashboard {
   padding: 28px;
+  padding-bottom: calc(28px + env(safe-area-inset-bottom));
 }
 
 .topbar {

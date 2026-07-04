@@ -18,6 +18,7 @@
 - หน้า `settings.html` สำหรับ Backend Setup แยกจากหน้า monitor เพื่อบันทึก Telegram Bot, Chat ID, market data API, gold API, news API และ AI summary API ในเครื่อง
 - แสดง system version และเครดิต `create by mr.1` บนทุกหน้า
 - มี Release Notes ในหน้า Settings สำหรับติดตามการเปลี่ยนแปลงแต่ละเวอร์ชัน
+- เตรียม Web App Manifest และ mobile meta สำหรับต่อยอดเป็นไอคอนแอปบนโทรศัพท์/แท็บเล็ต
 
 ## ขั้นต่อไปสำหรับ production
 

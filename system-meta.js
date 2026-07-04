@@ -1,8 +1,18 @@
 const ONE_TRADE_META = {
-  version: "1.0.2",
+  version: "1.0.3",
   createdBy: "mr.1",
   updatedAt: "2026-07-04",
   releaseNotes: [
+    {
+      version: "1.0.3",
+      date: "2026-07-04",
+      title: "เตรียม Responsive และ App Icon",
+      notes: [
+        "เพิ่ม Web App Manifest สำหรับติดตั้งเป็นไอคอนบนโทรศัพท์และแท็บเล็ตในอนาคต",
+        "เพิ่ม mobile web app meta tags สำหรับ iOS/Android browser",
+        "ปรับหน้า Settings ให้ใช้โลโก้เดียวกับหน้า Monitor และยืนยันแนว responsive สำหรับ desktop, tablet และโทรศัพท์",
+      ],
+    },
     {
       version: "1.0.2",
       date: "2026-07-04",

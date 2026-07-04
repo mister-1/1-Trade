@@ -1,4 +1,4 @@
-const stocks = [
+let stocks = [
   {
     ticker: "XAUUSD",
     name: "Gold Spot",
@@ -103,7 +103,7 @@ const stocks = [
   },
 ];
 
-const newsItems = [
+let newsItems = [
   {
     ticker: "GOLD",
     title: "ทองคำได้แรงหนุนจากความไม่แน่นอนของ macro",
@@ -132,6 +132,7 @@ const newsItems = [
 
 let selectedTicker = "NVDA";
 let activeFilter = "all";
+let liveDataMode = false;
 const SETTINGS_KEY = "oneTradeSettings";
 const appSettings = loadSettings();
 
@@ -140,7 +141,9 @@ const newsFeed = document.querySelector("#newsFeed");
 const toast = document.querySelector("#toast");
 
 function formatUsd(value) {
-  return `$${value.toFixed(2)}`;
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return "$--";
+  return `$${numeric.toFixed(2)}`;
 }
 
 function signalLabel(signal) {
@@ -160,6 +163,112 @@ function loadSettings() {
 
 function hasValue(value) {
   return Boolean(String(value || "").trim());
+}
+
+function getTradingSetup(stock, price, change) {
+  const volatility = stock.ticker === "XAUUSD" ? 0.008 : 0.026;
+  const trendBoost = Math.max(-4, Math.min(5, Number(change) || 0));
+  const entry = price * (1 + (trendBoost >= 0 ? 0.002 : 0.008));
+  const firstTarget = entry * (1 + volatility * 1.2);
+  const secondTarget = entry * (1 + volatility * 2.05);
+  const stop = entry * (1 - volatility * 1.05);
+  const technical = Math.max(35, Math.min(92, Math.round(stock.technical + trendBoost * 3)));
+  const score = Math.max(30, Math.min(94, Math.round((technical + stock.news + stock.market + stock.riskScore) / 4)));
+  const signal = score >= 78 ? "buy" : score <= 58 ? "risk" : "watch";
+  const risk = score <= 58 ? "สูง" : stock.riskScore >= 74 ? "ต่ำ-ปานกลาง" : "ปานกลาง";
+
+  return {
+    entry,
+    targets: [firstTarget, secondTarget],
+    stop,
+    technical,
+    score,
+    signal,
+    risk,
+  };
+}
+
+function mergeLiveAssets(assets) {
+  assets.forEach((asset) => {
+    const stock = stocks.find((item) => item.ticker === asset.ticker);
+    const price = Number(asset.price);
+    const change = Number(asset.change);
+    if (!stock || !Number.isFinite(price)) return;
+
+    const setup = getTradingSetup(stock, price, change);
+    stock.name = asset.name || stock.name;
+    stock.price = price;
+    stock.change = Number.isFinite(change) ? change : stock.change;
+    stock.entry = setup.entry;
+    stock.targets = setup.targets;
+    stock.stop = setup.stop;
+    stock.technical = setup.technical;
+    stock.score = setup.score;
+    stock.signal = setup.signal;
+    stock.risk = setup.risk;
+    stock.reason = `${asset.sourceLabel || "Live data"} อัปเดตราคา ${formatUsd(price)} (${stock.change >= 0 ? "+" : ""}${stock.change.toFixed(2)}%) ระบบคำนวณจุดเข้า/ขาย/ตัดขาดทุนใหม่จาก momentum ระยะสั้น พร้อมใช้ข่าวประกอบก่อนตัดสินใจ`;
+  });
+}
+
+function setDataMode(mode, updatedAt) {
+  const badge = document.querySelector("#dataModeBadge");
+  if (!badge) return;
+
+  if (mode === "live") {
+    badge.textContent = updatedAt ? `Live Data · ${updatedAt}` : "Live Data";
+    badge.classList.add("ready");
+    return;
+  }
+
+  badge.textContent = mode === "error" ? "Demo Fallback" : "Demo Data";
+  badge.classList.remove("ready");
+}
+
+function normalizeUpdatedAt(value) {
+  if (!value) return "";
+  try {
+    return new Intl.DateTimeFormat("th-TH", {
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "Asia/Bangkok",
+    }).format(new Date(value));
+  } catch {
+    return "";
+  }
+}
+
+async function loadLiveData({ manual = false } = {}) {
+  try {
+    const response = await fetch("/api/data?symbols=XAUUSD,NVDA,TSLA,AAPL,MSFT,AMD", {
+      cache: "no-store",
+      headers: { accept: "application/json" },
+    });
+
+    if (!response.ok) throw new Error(`API ${response.status}`);
+    const payload = await response.json();
+    liveDataMode = payload.mode === "live";
+
+    if (Array.isArray(payload.assets) && payload.assets.length > 0) {
+      mergeLiveAssets(payload.assets);
+    }
+
+    if (Array.isArray(payload.news) && payload.news.length > 0) {
+      newsItems = payload.news;
+    }
+
+    setDataMode(payload.mode, normalizeUpdatedAt(payload.updatedAt));
+    renderStocks();
+    renderNews();
+    renderSelectedStock();
+
+    if (manual) {
+      showToast(liveDataMode ? "ดึงข้อมูลจริงล่าสุดแล้ว" : "ยังไม่ได้ตั้งค่า API secret จึงใช้ข้อมูลตัวอย่าง");
+    }
+  } catch (error) {
+    liveDataMode = false;
+    setDataMode("error");
+    if (manual) showToast("ยังเชื่อม API จริงไม่ได้ ระบบใช้ข้อมูลตัวอย่างต่อไป");
+  }
 }
 
 function renderStocks() {
@@ -243,6 +352,8 @@ function buildTelegramMessage(stock) {
 }
 
 function simulateTick() {
+  if (liveDataMode) return;
+
   stocks.forEach((stock) => {
     const drift = (Math.random() - 0.48) * 0.42;
     stock.price = Math.max(5, stock.price * (1 + drift / 100));
@@ -286,18 +397,36 @@ document.querySelectorAll("[data-filter]").forEach((button) => {
 });
 
 document.querySelector("#refreshButton").addEventListener("click", () => {
-  simulateTick();
-  showToast("รีเฟรชข้อมูลจำลองเรียบร้อยแล้ว");
+  loadLiveData({ manual: true });
 });
 
 document.querySelector("#telegramButton").addEventListener("click", () => {
   const stock = stocks.find((item) => item.ticker === selectedTicker) || stocks[0];
-  const telegramReady = hasValue(appSettings.telegramToken) && hasValue(appSettings.telegramChatId);
-  showToast(telegramReady ? `Telegram config พร้อมสำหรับ ${stock.ticker}` : "ยังไม่ได้ตั้งค่า Telegram Token และ Chat ID");
+  fetch("/api/telegram", {
+    method: "POST",
+    headers: { "content-type": "application/json", accept: "application/json" },
+    body: JSON.stringify({ text: buildTelegramMessage(stock) }),
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.ok) {
+        showToast(`ส่ง Telegram alert สำหรับ ${stock.ticker} แล้ว`);
+        return;
+      }
+
+      const localReady = hasValue(appSettings.telegramToken) && hasValue(appSettings.telegramChatId);
+      showToast(localReady ? "ตั้งค่าในเครื่องแล้ว แต่ production secret ยังไม่พร้อม" : "ยังไม่ได้ตั้งค่า Telegram secret บน Cloudflare");
+    })
+    .catch(() => {
+      const localReady = hasValue(appSettings.telegramToken) && hasValue(appSettings.telegramChatId);
+      showToast(localReady ? `Telegram config พร้อมสำหรับ ${stock.ticker}` : "ยังไม่ได้ตั้งค่า Telegram Token และ Chat ID");
+    });
 });
 
 renderStocks();
 renderNews();
 renderSelectedStock();
-document.querySelector("#dataModeBadge").textContent = appSettings.marketProvider && appSettings.marketProvider !== "mock" ? "Configured" : "Mock Data";
+setDataMode("demo");
+loadLiveData();
 window.setInterval(simulateTick, 4200);
+window.setInterval(loadLiveData, 90000);

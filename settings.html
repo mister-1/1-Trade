@@ -66,7 +66,7 @@
             <h1>ตั้งค่าข้อมูลจริงและ Telegram สำหรับ 1-Trade</h1>
           </div>
           <div class="top-actions">
-            <span class="version-pill" data-app-version>v1.0.3</span>
+            <span class="version-pill" data-app-version>v1.0.4</span>
             <span class="data-mode" id="dataModeBadge">Mock Data</span>
             <a class="primary-button nav-link-button" href="./index.html">กลับหน้า Monitor</a>
           </div>
@@ -87,7 +87,7 @@
                 <span class="settings-icon">↗</span>
                 <div>
                   <h3>Telegram Bot</h3>
-                  <p>ตั้งค่า token และ chat ID สำหรับส่ง alert</p>
+                  <p>สำหรับทดสอบในเครื่อง ส่วน production ให้ใส่เป็น Cloudflare Secret</p>
                 </div>
               </div>
               <label>
@@ -119,11 +119,10 @@
               <label>
                 Market Data Provider
                 <select id="marketProvider" name="marketProvider">
-                  <option value="mock">Mock Data</option>
-                  <option value="finnhub">Finnhub</option>
                   <option value="twelvedata">Twelve Data</option>
+                  <option value="mock">Mock Data</option>
+                  <option value="marketaux">Marketaux News</option>
                   <option value="alphavantage">Alpha Vantage</option>
-                  <option value="polygon">Polygon</option>
                 </select>
               </label>
               <label>
@@ -136,7 +135,7 @@
               </label>
               <label>
                 News API Key
-                <input id="newsApiKey" name="newsApiKey" type="password" autocomplete="off" placeholder="Finnhub, Marketaux หรือ NewsAPI">
+                <input id="newsApiKey" name="newsApiKey" type="password" autocomplete="off" placeholder="Marketaux API key">
               </label>
               <label>
                 AI Summary API Key
@@ -158,6 +157,10 @@
               </div>
               <div class="status-list">
                 <div>
+                  <span>Backend API</span>
+                  <strong id="backendStatus">Cloudflare Functions</strong>
+                </div>
+                <div>
                   <span>Telegram</span>
                   <strong id="telegramStatus">ยังไม่ตั้งค่า</strong>
                 </div>
@@ -174,7 +177,14 @@
                   <strong id="newsStatus">Mock News</strong>
                 </div>
               </div>
-              <p class="settings-note">หมายเหตุ: MVP นี้เก็บค่าในเครื่องเพื่อทดสอบ UI เท่านั้น ระบบ production ควรย้าย API keys ไปไว้ฝั่ง backend/secret storage ไม่ควรฝังไว้ใน browser</p>
+              <p class="settings-note">หมายเหตุ: ค่าในฟอร์มนี้ใช้ทดสอบ UI ในเครื่องเท่านั้น ระบบ production รุ่นนี้อ่าน key จาก Cloudflare Secrets ผ่าน `/api/data` และ `/api/telegram`</p>
+              <div class="secret-list" aria-label="Cloudflare secret names">
+                <strong>Cloudflare Secrets ที่ต้องตั้ง</strong>
+                <code>TWELVE_DATA_API_KEY</code>
+                <code>MARKETAUX_API_KEY</code>
+                <code>TELEGRAM_BOT_TOKEN</code>
+                <code>TELEGRAM_CHAT_ID</code>
+              </div>
             </section>
           </div>
         </section>
@@ -185,7 +195,7 @@
               <p class="eyebrow">Release Notes</p>
               <h2>บันทึกการเปลี่ยนแปลงเวอร์ชัน</h2>
             </div>
-            <span class="live-pill" data-app-version>v1.0.3</span>
+            <span class="live-pill" data-app-version>v1.0.4</span>
           </div>
           <div class="release-list" id="releaseNotesList"></div>
         </section>
@@ -195,7 +205,7 @@
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <div class="creator-credit" aria-label="System credit">
       <span data-created-by>create by mr.1</span>
-      <span data-app-version>v1.0.3</span>
+      <span data-app-version>v1.0.4</span>
     </div>
     <script src="./system-meta.js"></script>
     <script src="./settings.js"></script>

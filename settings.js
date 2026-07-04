@@ -48,12 +48,13 @@ function renderSettings() {
   const telegramReady = hasValue(appSettings.telegramToken) && hasValue(appSettings.telegramChatId);
   const marketReady = appSettings.marketProvider && appSettings.marketProvider !== "mock" && hasValue(appSettings.marketApiKey);
   const goldReady = hasValue(appSettings.goldApiKey);
-  const newsReady = hasValue(appSettings.newsApiKey) && hasValue(appSettings.aiApiKey);
+  const newsReady = hasValue(appSettings.newsApiKey);
 
+  setStatusText("#backendStatus", "พร้อมรับ Cloudflare Secrets", true);
   setStatusText("#telegramStatus", telegramReady ? "พร้อมส่ง Alert" : "ยังไม่ตั้งค่า", telegramReady);
   setStatusText("#marketStatus", marketReady ? `${appSettings.marketProvider} พร้อมใช้` : "Mock Data", marketReady);
   setStatusText("#goldStatus", goldReady ? "พร้อมดึง XAUUSD" : "Mock Data", goldReady);
-  setStatusText("#newsStatus", newsReady ? "พร้อมสรุปข่าวไทย" : "Mock News", newsReady);
+  setStatusText("#newsStatus", newsReady ? "Marketaux พร้อมใช้" : "Mock News", newsReady);
 
   const liveReady = marketReady || goldReady || newsReady;
   document.querySelector("#dataModeBadge").textContent = liveReady ? "Configured" : "Mock Data";

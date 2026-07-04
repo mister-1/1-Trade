@@ -1,8 +1,19 @@
 const ONE_TRADE_META = {
-  version: "1.0.3",
+  version: "1.0.4",
   createdBy: "mr.1",
   updatedAt: "2026-07-04",
   releaseNotes: [
+    {
+      version: "1.0.4",
+      date: "2026-07-04",
+      title: "เชื่อม API ข้อมูลจริงผ่าน Cloudflare",
+      notes: [
+        "เพิ่ม Cloudflare Pages Functions `/api/data` สำหรับดึงราคาจาก Twelve Data และข่าวจาก Marketaux โดยอ่าน API key จาก Cloudflare Secrets",
+        "เพิ่ม `/api/telegram` สำหรับส่ง Telegram alert ผ่าน backend แทนการใช้ token ใน browser",
+        "ปรับหน้า Dashboard ให้ใช้ live data เมื่อ secret พร้อม และ fallback เป็น demo data เมื่อยังไม่ได้ตั้งค่า API",
+        "เพิ่มรายชื่อ Cloudflare Secrets ที่ต้องตั้งในหน้า Settings",
+      ],
+    },
     {
       version: "1.0.3",
       date: "2026-07-04",

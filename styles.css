@@ -253,6 +253,12 @@ button {
   background: rgba(255, 191, 71, 0.08);
 }
 
+.data-mode.ready {
+  border-color: rgba(53, 242, 154, 0.36);
+  color: var(--green);
+  background: rgba(53, 242, 154, 0.1);
+}
+
 .version-pill {
   display: inline-flex;
   align-items: center;
@@ -815,6 +821,31 @@ button {
   color: var(--muted);
   font-size: 0.86rem;
   line-height: 1.55;
+}
+
+.secret-list {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid rgba(54, 216, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(54, 216, 255, 0.055);
+}
+
+.secret-list strong {
+  color: #e7fbff;
+  font-size: 0.88rem;
+}
+
+.secret-list code {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  color: var(--green);
+  font: 800 0.82rem ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  overflow-wrap: anywhere;
+  background: rgba(2, 10, 11, 0.72);
 }
 
 .settings-card label {

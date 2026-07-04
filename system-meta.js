@@ -1,8 +1,18 @@
 const ONE_TRADE_META = {
-  version: "1.0.9",
+  version: "1.0.10",
   createdBy: "mr.1",
   updatedAt: "2026-07-05",
   releaseNotes: [
+    {
+      version: "1.0.10",
+      date: "2026-07-05",
+      title: "แก้ ticker badge ไม่ให้ล้นกรอบ",
+      notes: [
+        "ปรับ ticker chip ให้รองรับตัวยาวเช่น XAUUSD และ GOOGL โดยไม่ตัดเป็นจุด",
+        "แยก CSS ของ ticker symbol ออกจาก metadata เพื่อไม่ให้โดน ellipsis ผิดจุด",
+        "ปรับขนาด badge บนมือถือให้ตัวอักษรอยู่กลางกรอบและอ่านง่ายขึ้น",
+      ],
+    },
     {
       version: "1.0.9",
       date: "2026-07-05",

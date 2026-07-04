@@ -482,16 +482,13 @@ button {
   position: relative;
   display: inline-grid;
   place-items: center;
-  width: clamp(52px, 6vw, 66px);
-  min-width: clamp(52px, 6vw, 66px);
+  width: 66px;
+  min-width: 66px;
   height: 42px;
-  padding: 0 9px;
+  padding: 0 7px;
   border-radius: 8px;
   border: 1px solid rgba(54, 216, 255, 0.42);
   color: #f5fffc;
-  font-size: clamp(0.74rem, 1.6vw, 0.84rem);
-  font-weight: 900;
-  line-height: 1;
   overflow: hidden;
   background:
     radial-gradient(circle at 50% 0%, rgba(54, 216, 255, 0.38), transparent 52%),
@@ -504,6 +501,28 @@ button {
   text-shadow: 0 1px 10px rgba(54, 216, 255, 0.3);
 }
 
+.ticker-symbol {
+  position: relative;
+  z-index: 1;
+  display: block;
+  max-width: 100%;
+  color: #f5fffc;
+  font-size: 0.84rem;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  transform: translateY(0);
+}
+
+.ticker-symbol.is-short {
+  font-size: 0.95rem;
+}
+
+.ticker-symbol.is-long {
+  font-size: 0.66rem;
+}
+
 .ticker-chip::after {
   position: absolute;
   inset: 6px 8px auto;
@@ -513,7 +532,7 @@ button {
 }
 
 .stock-title strong,
-.stock-title span {
+.stock-title > span:not(.ticker-chip) {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1185,10 +1204,22 @@ button {
   }
 
   .ticker-chip {
-    width: 50px;
-    min-width: 50px;
+    width: 64px;
+    min-width: 64px;
     height: 38px;
-    font-size: 0.72rem;
+    padding: 0 6px;
+  }
+
+  .ticker-symbol {
+    font-size: 0.8rem;
+  }
+
+  .ticker-symbol.is-short {
+    font-size: 0.92rem;
+  }
+
+  .ticker-symbol.is-long {
+    font-size: 0.62rem;
   }
 
   .stock-title .stock-meta {

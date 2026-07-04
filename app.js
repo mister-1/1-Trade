@@ -313,6 +313,12 @@ function getStockScanText(stock) {
   return formatStockUpdatedAt(stock.updatedAt);
 }
 
+function getTickerLengthClass(ticker) {
+  if (ticker.length >= 5) return " is-long";
+  if (ticker.length <= 1) return " is-short";
+  return "";
+}
+
 async function loadLiveData({ manual = false } = {}) {
   try {
     const symbols = SCAN_UNIVERSE.map((asset) => asset.ticker).join(",");
@@ -369,7 +375,7 @@ function renderStocks() {
       return `
         <button class="stock-row${active}" type="button" data-ticker="${stock.ticker}">
           <span class="stock-title">
-            <span class="ticker-chip">${stock.ticker}</span>
+            <span class="ticker-chip"><span class="ticker-symbol${getTickerLengthClass(stock.ticker)}">${stock.ticker}</span></span>
             <span>
               <strong>${stock.name}</strong>
               <span class="stock-meta">

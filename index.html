@@ -66,7 +66,7 @@
             <h1>1-Trade วิเคราะห์หุ้นสหรัฐและทองคำระยะสั้น</h1>
           </div>
           <div class="top-actions">
-            <span class="version-pill" data-app-version>v1.0.8</span>
+            <span class="version-pill" data-app-version>v1.0.9</span>
             <span class="data-mode" id="dataModeBadge">Loading Data</span>
             <button id="refreshButton" class="icon-button" type="button" title="รีเฟรชข้อมูล">⟳</button>
             <button id="telegramButton" class="primary-button" type="button">ส่ง Telegram Alert</button>
@@ -114,6 +114,16 @@
                 <button type="button" data-filter="buy">น่าเข้า</button>
                 <button type="button" data-filter="risk">เสี่ยงสูง</button>
               </div>
+            </div>
+            <div class="scan-status" aria-label="Scanner progress">
+              <div class="scan-status-top">
+                <strong id="scanBatchLabel">กำลังเตรียมสแกน</strong>
+                <span id="scanUpdatedLabel">รอข้อมูล</span>
+              </div>
+              <div class="scan-progress" aria-hidden="true">
+                <i id="scanProgressBar"></i>
+              </div>
+              <div class="scan-batch-symbols" id="scanBatchSymbols">ระบบจะทยอยสแกนตามข้อจำกัด API ฟรี</div>
             </div>
             <div class="stock-table" id="stockTable"></div>
           </section>
@@ -206,7 +216,7 @@
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <div class="creator-credit" aria-label="System credit">
       <span data-created-by>create by mr.1</span>
-      <span data-app-version>v1.0.8</span>
+      <span data-app-version>v1.0.9</span>
     </div>
     <script src="./system-meta.js"></script>
     <script src="./app.js"></script>

@@ -121,6 +121,13 @@ let liveDataMode = false;
 let scanBatchOffset = 0;
 let liveBatchText = "0/51";
 const LIVE_BATCH_SIZE = 8;
+let scanState = {
+  batchIndex: 0,
+  totalBatches: Math.ceil(SCAN_UNIVERSE.length / LIVE_BATCH_SIZE),
+  progress: 0,
+  symbols: [],
+  updatedAt: "",
+};
 const SETTINGS_KEY = "oneTradeSettings";
 const FAVORITES_KEY = "oneTradeFavorites";
 const appSettings = loadSettings();
@@ -129,6 +136,10 @@ let favoriteTickers = loadFavorites();
 const stockTable = document.querySelector("#stockTable");
 const newsFeed = document.querySelector("#newsFeed");
 const toast = document.querySelector("#toast");
+const scanBatchLabel = document.querySelector("#scanBatchLabel");
+const scanUpdatedLabel = document.querySelector("#scanUpdatedLabel");
+const scanProgressBar = document.querySelector("#scanProgressBar");
+const scanBatchSymbols = document.querySelector("#scanBatchSymbols");
 
 function formatUsd(value) {
   const numeric = Number(value);
@@ -194,7 +205,7 @@ function getTradingSetup(stock, price, change) {
 
 stocks = SCAN_UNIVERSE.map(createSeedStock);
 
-function mergeLiveAssets(assets) {
+function mergeLiveAssets(assets, updatedAt) {
   assets.forEach((asset) => {
     let stock = stocks.find((item) => item.ticker === asset.ticker);
     const price = Number(asset.price);
@@ -218,6 +229,7 @@ function mergeLiveAssets(assets) {
     stock.signal = setup.signal;
     stock.risk = setup.risk;
     stock.live = asset.live !== false;
+    if (stock.live) stock.updatedAt = updatedAt;
     stock.reason = `${asset.sourceLabel || "Live data"} อัปเดตราคา ${formatUsd(price)} (${stock.change >= 0 ? "+" : ""}${stock.change.toFixed(2)}%) ระบบสแกน 50 ตัวและทยอยอัปเดต live batch ละ ${LIVE_BATCH_SIZE} ตัวเพื่อให้เหมาะกับ API ฟรี พร้อมใช้ข่าวประกอบก่อนตัดสินใจ`;
   });
 }
@@ -256,6 +268,51 @@ function normalizeUpdatedAt(value) {
   }
 }
 
+function getBatchProgress(payload) {
+  const size = payload.liveBatch?.size || LIVE_BATCH_SIZE;
+  const universeSize = payload.universeSize || SCAN_UNIVERSE.length;
+  const offset = payload.liveBatch?.offset || 0;
+  const batchIndex = Math.floor(offset / size) + 1;
+  const totalBatches = Math.ceil(universeSize / size);
+  const scannedCount = Math.min(universeSize, offset + size);
+
+  return {
+    batchIndex,
+    totalBatches,
+    progress: Math.max(0, Math.min(100, (scannedCount / universeSize) * 100)),
+    symbols: payload.liveBatch?.symbols || [],
+    updatedAt: normalizeUpdatedAt(payload.updatedAt),
+  };
+}
+
+function renderScanStatus() {
+  if (!scanBatchLabel || !scanProgressBar || !scanBatchSymbols) return;
+
+  scanBatchLabel.textContent = scanState.batchIndex
+    ? `กำลังสแกนชุด ${scanState.batchIndex}/${scanState.totalBatches}`
+    : "กำลังเตรียมสแกน";
+  scanUpdatedLabel.textContent = scanState.updatedAt ? `อัปเดต ${scanState.updatedAt}` : "รอข้อมูล";
+  scanProgressBar.style.width = `${scanState.progress}%`;
+  scanBatchSymbols.textContent = scanState.symbols.length
+    ? `Batch ปัจจุบัน: ${scanState.symbols.join(", ")}`
+    : "ระบบจะทยอยสแกนตามข้อจำกัด API ฟรี";
+}
+
+function formatStockUpdatedAt(value) {
+  return value ? `Updated ${value}` : "Waiting";
+}
+
+function getStockScanClass(stock) {
+  if (stock.live) return " live";
+  if (stock.updatedAt) return " updated";
+  return "";
+}
+
+function getStockScanText(stock) {
+  if (stock.live) return "Live now";
+  return formatStockUpdatedAt(stock.updatedAt);
+}
+
 async function loadLiveData({ manual = false } = {}) {
   try {
     const symbols = SCAN_UNIVERSE.map((asset) => asset.ticker).join(",");
@@ -267,11 +324,12 @@ async function loadLiveData({ manual = false } = {}) {
     if (!response.ok) throw new Error(`API ${response.status}`);
     const payload = await response.json();
     liveDataMode = payload.provider?.market === "twelvedata";
+    scanState = getBatchProgress(payload);
     scanBatchOffset = Number.isFinite(payload.nextOffset) ? payload.nextOffset : (scanBatchOffset + LIVE_BATCH_SIZE) % SCAN_UNIVERSE.length;
     liveBatchText = payload.liveBatch?.size ? `${payload.liveBatch.size}/${payload.universeSize || SCAN_UNIVERSE.length}` : `0/${SCAN_UNIVERSE.length}`;
 
     if (Array.isArray(payload.assets) && payload.assets.length > 0) {
-      mergeLiveAssets(payload.assets);
+      mergeLiveAssets(payload.assets, scanState.updatedAt);
     }
 
     if (Array.isArray(payload.news) && payload.news.length > 0) {
@@ -279,6 +337,7 @@ async function loadLiveData({ manual = false } = {}) {
     }
 
     setDataMode(payload.mode, normalizeUpdatedAt(payload.updatedAt), { batchText: liveBatchText });
+    renderScanStatus();
     renderStocks();
     renderNews();
     renderSelectedStock();
@@ -289,6 +348,7 @@ async function loadLiveData({ manual = false } = {}) {
   } catch (error) {
     liveDataMode = false;
     setDataMode("error");
+    renderScanStatus();
     if (manual) showToast("ยังเชื่อม API จริงไม่ได้ ระบบใช้ข้อมูลตัวอย่างต่อไป");
   }
 }
@@ -312,7 +372,10 @@ function renderStocks() {
             <span class="ticker-chip">${stock.ticker}</span>
             <span>
               <strong>${stock.name}</strong>
-              <span class="stock-meta">${stock.live ? "Live" : "Queued"} · Holding 1-3 วัน</span>
+              <span class="stock-meta">
+                <span class="scan-pill${getStockScanClass(stock)}">${getStockScanText(stock)}</span>
+                <span>Holding 1-3 วัน</span>
+              </span>
             </span>
           </span>
           <span class="favorite-cell">
@@ -482,6 +545,7 @@ renderStocks();
 renderNews();
 renderSelectedStock();
 setDataMode("demo");
+renderScanStatus();
 loadLiveData();
 window.setInterval(simulateTick, 4200);
 window.setInterval(loadLiveData, 90000);

@@ -21,6 +21,7 @@
   - `/api/data` ดึงราคาจาก Twelve Data และข่าวจาก Marketaux
   - `/api/telegram` ส่ง Telegram alert ผ่าน backend
 - โหมด API ฟรีจะทยอยอัปเดต live batch ละ 8 ตัวต่อรอบ เพื่อให้เหมาะกับข้อจำกัด Twelve Data free plan
+- แสดง Scan Progress, batch ปัจจุบัน และสถานะรายตัวว่า Live now, Updated หรือ Waiting
 - แสดง system version และเครดิต `create by mr.1` บนทุกหน้า
 - มี Release Notes ในหน้า Settings สำหรับติดตามการเปลี่ยนแปลงแต่ละเวอร์ชัน
 - เตรียม Web App Manifest และ mobile meta สำหรับต่อยอดเป็นไอคอนแอปบนโทรศัพท์/แท็บเล็ต

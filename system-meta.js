@@ -1,8 +1,18 @@
 const ONE_TRADE_META = {
-  version: "1.0.8",
+  version: "1.0.9",
   createdBy: "mr.1",
   updatedAt: "2026-07-05",
   releaseNotes: [
+    {
+      version: "1.0.9",
+      date: "2026-07-05",
+      title: "เพิ่มสถานะการสแกนแบบ Batch",
+      notes: [
+        "เพิ่มแผง Scan Progress เพื่อบอกว่าระบบกำลังสแกนชุดที่เท่าไรจากทั้งหมด",
+        "แสดงรายชื่อหุ้นใน batch ปัจจุบันและเวลาที่อัปเดตล่าสุด",
+        "เพิ่ม badge รายตัวเป็น Live now, Updated และ Waiting เพื่อให้รู้ว่าหุ้นตัวไหนได้ราคาจริงแล้ว",
+      ],
+    },
     {
       version: "1.0.8",
       date: "2026-07-05",

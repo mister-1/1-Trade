@@ -395,6 +395,58 @@ button {
   gap: 8px;
 }
 
+.scan-status {
+  display: grid;
+  gap: 9px;
+  margin: -4px 0 16px;
+  padding: 13px;
+  border: 1px solid rgba(54, 216, 255, 0.18);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(54, 216, 255, 0.075), rgba(53, 242, 154, 0.04)),
+    rgba(255, 255, 255, 0.028);
+}
+
+.scan-status-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.scan-status-top strong {
+  color: #f4fffb;
+  font-size: 0.94rem;
+}
+
+.scan-status-top span,
+.scan-batch-symbols {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.scan-progress {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.scan-progress i {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--green), var(--cyan), var(--amber));
+  transition: width 260ms ease;
+}
+
+.scan-batch-symbols {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .stock-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 42px 122px 90px 92px;
@@ -466,6 +518,38 @@ button {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.stock-title .stock-meta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.scan-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 0 8px;
+  border: 1px solid rgba(255, 191, 71, 0.28);
+  border-radius: 8px;
+  color: var(--amber);
+  font-size: 0.72rem;
+  font-weight: 900;
+  background: rgba(255, 191, 71, 0.08);
+}
+
+.scan-pill.live {
+  border-color: rgba(53, 242, 154, 0.42);
+  color: var(--green);
+  background: rgba(53, 242, 154, 0.1);
+}
+
+.scan-pill.updated {
+  border-color: rgba(54, 216, 255, 0.34);
+  color: var(--cyan);
+  background: rgba(54, 216, 255, 0.08);
 }
 
 .stock-title strong,
@@ -1034,6 +1118,10 @@ button {
     display: grid;
   }
 
+  .scan-status-top {
+    display: grid;
+  }
+
   .top-actions {
     justify-content: flex-start;
   }
@@ -1082,6 +1170,10 @@ button {
     align-items: start;
   }
 
+  .scan-batch-symbols {
+    white-space: normal;
+  }
+
   .stock-row {
     grid-template-columns: minmax(0, 1fr) 36px;
     gap: 10px;
@@ -1097,6 +1189,12 @@ button {
     min-width: 50px;
     height: 38px;
     font-size: 0.72rem;
+  }
+
+  .stock-title .stock-meta {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
   }
 
   .favorite-toggle {

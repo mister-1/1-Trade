@@ -1,107 +1,92 @@
-let stocks = [
-  {
-    ticker: "XAUUSD",
-    name: "Gold Spot",
-    price: 2356.4,
-    change: 0.46,
-    signal: "buy",
-    score: 78,
-    entry: 2358,
-    targets: [2372, 2388],
-    stop: 2339,
-    risk: "ปานกลาง",
-    reason: "ทองคำยืนเหนือแนวรับระยะสั้น ขณะที่ความเสี่ยง macro และค่าเงินดอลลาร์ยังเป็นตัวแปรสำคัญ",
-    technical: 77,
-    news: 76,
-    market: 71,
-    riskScore: 68,
-  },
-  {
-    ticker: "NVDA",
-    name: "NVIDIA Corporation",
-    price: 128.74,
-    change: 2.18,
-    signal: "buy",
-    score: 86,
-    entry: 128.5,
-    targets: [133, 136],
-    stop: 124.8,
-    risk: "ปานกลาง",
-    reason: "ราคาอยู่เหนือ EMA20/50, volume สูงกว่าค่าเฉลี่ย และข่าว AI demand ยังหนุนกลุ่ม semiconductor",
-    technical: 88,
-    news: 84,
-    market: 78,
-    riskScore: 74,
-  },
-  {
-    ticker: "TSLA",
-    name: "Tesla, Inc.",
-    price: 246.12,
-    change: -1.34,
-    signal: "risk",
-    score: 54,
-    entry: 251.4,
-    targets: [258.2, 264],
-    stop: 239.9,
-    risk: "สูง",
-    reason: "ราคาแกว่งกว้างและข่าว margin ยังเป็นแรงกดดัน ระบบให้รอราคายืนเหนือแนวต้านก่อน",
-    technical: 52,
-    news: 44,
-    market: 62,
-    riskScore: 38,
-  },
-  {
-    ticker: "AAPL",
-    name: "Apple Inc.",
-    price: 214.83,
-    change: 0.44,
-    signal: "watch",
-    score: 69,
-    entry: 216.2,
-    targets: [219.5, 223],
-    stop: 211.7,
-    risk: "ต่ำ-ปานกลาง",
-    reason: "แนวโน้มเริ่มฟื้น แต่ volume ยังไม่ชัด รอ breakout พร้อมแรงซื้อจากตลาดรวม",
-    technical: 70,
-    news: 64,
-    market: 72,
-    riskScore: 76,
-  },
-  {
-    ticker: "MSFT",
-    name: "Microsoft Corporation",
-    price: 493.46,
-    change: 1.02,
-    signal: "buy",
-    score: 81,
-    entry: 494.2,
-    targets: [502.5, 509.4],
-    stop: 485.6,
-    risk: "ปานกลาง",
-    reason: "แรงซื้อในกลุ่ม cloud และ AI ยังหนุน momentum ระยะสั้น แต่ต้องดู Nasdaq ประกอบ",
-    technical: 82,
-    news: 79,
-    market: 80,
-    riskScore: 71,
-  },
-  {
-    ticker: "AMD",
-    name: "Advanced Micro Devices",
-    price: 161.58,
-    change: 1.74,
-    signal: "watch",
-    score: 73,
-    entry: 163.1,
-    targets: [168.2, 171.5],
-    stop: 157.4,
-    risk: "ปานกลาง",
-    reason: "หุ้นเริ่มมีแรงซื้อจาก sector rotation แต่ยังต้องรอ volume ยืนยันเหนือแนวต้าน",
-    technical: 75,
-    news: 70,
-    market: 78,
-    riskScore: 65,
-  },
+const SCAN_UNIVERSE = [
+  { ticker: "XAUUSD", name: "Gold Spot / US Dollar", theme: "Gold" },
+  { ticker: "NVDA", name: "NVIDIA Corporation", theme: "AI Chip" },
+  { ticker: "MSFT", name: "Microsoft Corporation", theme: "Cloud AI" },
+  { ticker: "AAPL", name: "Apple Inc.", theme: "Mega Cap" },
+  { ticker: "AMZN", name: "Amazon.com, Inc.", theme: "Cloud Commerce" },
+  { ticker: "META", name: "Meta Platforms, Inc.", theme: "Ads AI" },
+  { ticker: "GOOGL", name: "Alphabet Inc.", theme: "Search AI" },
+  { ticker: "TSLA", name: "Tesla, Inc.", theme: "EV Momentum" },
+  { ticker: "AVGO", name: "Broadcom Inc.", theme: "AI Infra" },
+  { ticker: "AMD", name: "Advanced Micro Devices", theme: "AI Chip" },
+  { ticker: "NFLX", name: "Netflix, Inc.", theme: "Streaming" },
+  { ticker: "COST", name: "Costco Wholesale", theme: "Consumer" },
+  { ticker: "PLTR", name: "Palantir Technologies", theme: "AI Software" },
+  { ticker: "ARM", name: "Arm Holdings", theme: "Semiconductor" },
+  { ticker: "MU", name: "Micron Technology", theme: "Memory" },
+  { ticker: "QCOM", name: "QUALCOMM Incorporated", theme: "Mobile Chip" },
+  { ticker: "INTC", name: "Intel Corporation", theme: "Semiconductor" },
+  { ticker: "ORCL", name: "Oracle Corporation", theme: "Cloud" },
+  { ticker: "CRM", name: "Salesforce, Inc.", theme: "SaaS" },
+  { ticker: "NOW", name: "ServiceNow, Inc.", theme: "Enterprise SaaS" },
+  { ticker: "ADBE", name: "Adobe Inc.", theme: "Creative AI" },
+  { ticker: "PANW", name: "Palo Alto Networks", theme: "Cybersecurity" },
+  { ticker: "CRWD", name: "CrowdStrike Holdings", theme: "Cybersecurity" },
+  { ticker: "SNOW", name: "Snowflake Inc.", theme: "Data Cloud" },
+  { ticker: "SHOP", name: "Shopify Inc.", theme: "Ecommerce" },
+  { ticker: "COIN", name: "Coinbase Global", theme: "Crypto Beta" },
+  { ticker: "MSTR", name: "MicroStrategy Incorporated", theme: "Bitcoin Proxy" },
+  { ticker: "JPM", name: "JPMorgan Chase", theme: "Banking" },
+  { ticker: "BAC", name: "Bank of America", theme: "Banking" },
+  { ticker: "V", name: "Visa Inc.", theme: "Payments" },
+  { ticker: "MA", name: "Mastercard Incorporated", theme: "Payments" },
+  { ticker: "PYPL", name: "PayPal Holdings", theme: "Fintech" },
+  { ticker: "XOM", name: "Exxon Mobil", theme: "Energy" },
+  { ticker: "CVX", name: "Chevron Corporation", theme: "Energy" },
+  { ticker: "OXY", name: "Occidental Petroleum", theme: "Energy" },
+  { ticker: "LLY", name: "Eli Lilly and Company", theme: "Healthcare" },
+  { ticker: "UNH", name: "UnitedHealth Group", theme: "Healthcare" },
+  { ticker: "JNJ", name: "Johnson & Johnson", theme: "Healthcare" },
+  { ticker: "PFE", name: "Pfizer Inc.", theme: "Healthcare" },
+  { ticker: "NKE", name: "NIKE, Inc.", theme: "Consumer" },
+  { ticker: "SBUX", name: "Starbucks Corporation", theme: "Consumer" },
+  { ticker: "MCD", name: "McDonald's Corporation", theme: "Consumer" },
+  { ticker: "WMT", name: "Walmart Inc.", theme: "Retail" },
+  { ticker: "HD", name: "Home Depot", theme: "Retail" },
+  { ticker: "DIS", name: "The Walt Disney Company", theme: "Media" },
+  { ticker: "BA", name: "Boeing Company", theme: "Aerospace" },
+  { ticker: "CAT", name: "Caterpillar Inc.", theme: "Industrial" },
+  { ticker: "GE", name: "GE Aerospace", theme: "Industrial" },
+  { ticker: "UBER", name: "Uber Technologies", theme: "Mobility" },
+  { ticker: "ABNB", name: "Airbnb, Inc.", theme: "Travel" },
+  { ticker: "SMCI", name: "Super Micro Computer", theme: "AI Server" },
 ];
+
+function seedNumber(ticker) {
+  return ticker.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
+}
+
+function createSeedStock(asset, index) {
+  const seed = seedNumber(asset.ticker);
+  const price = asset.ticker === "XAUUSD" ? 2356.4 : 42 + ((seed * 7 + index * 13) % 560);
+  const change = ((seed % 61) - 30) / 14;
+  const technical = Math.max(42, Math.min(88, 56 + (seed % 33) + Math.round(change * 2)));
+  const news = Math.max(40, Math.min(86, 54 + ((seed + index) % 31)));
+  const market = Math.max(45, Math.min(86, 58 + ((seed + index * 2) % 25)));
+  const riskScore = Math.max(38, Math.min(84, 70 - Math.abs(Math.round(change * 7)) + (index % 8)));
+  const score = Math.max(30, Math.min(94, Math.round((technical + news + market + riskScore) / 4)));
+  const signal = score >= 78 ? "buy" : score <= 58 ? "risk" : "watch";
+  const risk = score <= 58 ? "สูง" : riskScore >= 74 ? "ต่ำ-ปานกลาง" : "ปานกลาง";
+  const base = {
+    ticker: asset.ticker,
+    name: asset.name,
+    price,
+    change,
+    signal,
+    score,
+    risk,
+    reason: `อยู่ใน universe สแกน 50 หุ้นสหรัฐสำหรับธีม ${asset.theme} ระบบจะทยอยอัปเดตราคาจริงตามรอบ API ฟรี`,
+    technical,
+    news,
+    market,
+    riskScore,
+    live: false,
+  };
+  const setup = getTradingSetup(base, price, change);
+  return { ...base, ...setup };
+}
+
+let stocks = [];
 
 let newsItems = [
   {
@@ -133,6 +118,9 @@ let newsItems = [
 let selectedTicker = "NVDA";
 let activeFilter = "all";
 let liveDataMode = false;
+let scanBatchOffset = 0;
+let liveBatchText = "0/51";
+const LIVE_BATCH_SIZE = 8;
 const SETTINGS_KEY = "oneTradeSettings";
 const appSettings = loadSettings();
 
@@ -188,12 +176,19 @@ function getTradingSetup(stock, price, change) {
   };
 }
 
+stocks = SCAN_UNIVERSE.map(createSeedStock);
+
 function mergeLiveAssets(assets) {
   assets.forEach((asset) => {
-    const stock = stocks.find((item) => item.ticker === asset.ticker);
+    let stock = stocks.find((item) => item.ticker === asset.ticker);
     const price = Number(asset.price);
     const change = Number(asset.change);
-    if (!stock || !Number.isFinite(price)) return;
+    if (!Number.isFinite(price)) return;
+    if (!stock) {
+      const seedAsset = { ticker: asset.ticker, name: asset.name || asset.ticker, theme: "Scanner" };
+      stock = createSeedStock(seedAsset, stocks.length);
+      stocks.push(stock);
+    }
 
     const setup = getTradingSetup(stock, price, change);
     stock.name = asset.name || stock.name;
@@ -206,17 +201,25 @@ function mergeLiveAssets(assets) {
     stock.score = setup.score;
     stock.signal = setup.signal;
     stock.risk = setup.risk;
-    stock.reason = `${asset.sourceLabel || "Live data"} อัปเดตราคา ${formatUsd(price)} (${stock.change >= 0 ? "+" : ""}${stock.change.toFixed(2)}%) ระบบคำนวณจุดเข้า/ขาย/ตัดขาดทุนใหม่จาก momentum ระยะสั้น พร้อมใช้ข่าวประกอบก่อนตัดสินใจ`;
+    stock.live = asset.live !== false;
+    stock.reason = `${asset.sourceLabel || "Live data"} อัปเดตราคา ${formatUsd(price)} (${stock.change >= 0 ? "+" : ""}${stock.change.toFixed(2)}%) ระบบสแกน 50 ตัวและทยอยอัปเดต live batch ละ ${LIVE_BATCH_SIZE} ตัวเพื่อให้เหมาะกับ API ฟรี พร้อมใช้ข่าวประกอบก่อนตัดสินใจ`;
   });
 }
 
-function setDataMode(mode, updatedAt) {
+function setDataMode(mode, updatedAt, meta = {}) {
   const badge = document.querySelector("#dataModeBadge");
   if (!badge) return;
 
   if (mode === "live") {
-    badge.textContent = updatedAt ? `Live Data · ${updatedAt}` : "Live Data";
+    const batchText = meta.batchText || liveBatchText;
+    badge.textContent = updatedAt ? `Live Data ${batchText} · ${updatedAt}` : `Live Data ${batchText}`;
     badge.classList.add("ready");
+    return;
+  }
+
+  if (mode === "partial") {
+    badge.textContent = updatedAt ? `Partial Live · ${updatedAt}` : "Partial Live";
+    badge.classList.remove("ready");
     return;
   }
 
@@ -239,14 +242,17 @@ function normalizeUpdatedAt(value) {
 
 async function loadLiveData({ manual = false } = {}) {
   try {
-    const response = await fetch("/api/data?symbols=XAUUSD,NVDA,TSLA,AAPL,MSFT,AMD", {
+    const symbols = SCAN_UNIVERSE.map((asset) => asset.ticker).join(",");
+    const response = await fetch(`/api/data?symbols=${encodeURIComponent(symbols)}&liveLimit=${LIVE_BATCH_SIZE}&offset=${scanBatchOffset}`, {
       cache: "no-store",
       headers: { accept: "application/json" },
     });
 
     if (!response.ok) throw new Error(`API ${response.status}`);
     const payload = await response.json();
-    liveDataMode = payload.mode === "live";
+    liveDataMode = payload.provider?.market === "twelvedata";
+    scanBatchOffset = Number.isFinite(payload.nextOffset) ? payload.nextOffset : (scanBatchOffset + LIVE_BATCH_SIZE) % SCAN_UNIVERSE.length;
+    liveBatchText = payload.liveBatch?.size ? `${payload.liveBatch.size}/${payload.universeSize || SCAN_UNIVERSE.length}` : `0/${SCAN_UNIVERSE.length}`;
 
     if (Array.isArray(payload.assets) && payload.assets.length > 0) {
       mergeLiveAssets(payload.assets);
@@ -256,13 +262,13 @@ async function loadLiveData({ manual = false } = {}) {
       newsItems = payload.news;
     }
 
-    setDataMode(payload.mode, normalizeUpdatedAt(payload.updatedAt));
+    setDataMode(payload.mode, normalizeUpdatedAt(payload.updatedAt), { batchText: liveBatchText });
     renderStocks();
     renderNews();
     renderSelectedStock();
 
     if (manual) {
-      showToast(liveDataMode ? "ดึงข้อมูลจริงล่าสุดแล้ว" : "ยังไม่ได้ตั้งค่า API secret จึงใช้ข้อมูลตัวอย่าง");
+      showToast(liveDataMode ? `สแกนข้อมูลจริง batch ${liveBatchText} แล้ว` : "ยังไม่ได้ตั้งค่า API secret จึงใช้ข้อมูลสำรอง");
     }
   } catch (error) {
     liveDataMode = false;
@@ -272,7 +278,10 @@ async function loadLiveData({ manual = false } = {}) {
 }
 
 function renderStocks() {
-  const filtered = stocks.filter((stock) => activeFilter === "all" || stock.signal === activeFilter);
+  const filtered = stocks
+    .filter((stock) => activeFilter === "all" || stock.signal === activeFilter)
+    .slice()
+    .sort((a, b) => b.score - a.score || Math.abs(b.change) - Math.abs(a.change));
   stockTable.innerHTML = filtered
     .map((stock) => {
       const active = stock.ticker === selectedTicker ? " active" : "";
@@ -283,7 +292,7 @@ function renderStocks() {
             <span class="ticker-chip">${stock.ticker}</span>
             <span>
               <strong>${stock.name}</strong>
-              <span class="stock-meta">${stock.ticker} · Holding 1-3 วัน</span>
+              <span class="stock-meta">${stock.live ? "Live" : "Queued"} · Holding 1-3 วัน</span>
             </span>
           </span>
           <span class="price-cell">

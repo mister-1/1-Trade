@@ -1,8 +1,19 @@
 const ONE_TRADE_META = {
-  version: "1.0.5",
+  version: "1.0.6",
   createdBy: "mr.1",
   updatedAt: "2026-07-05",
   releaseNotes: [
+    {
+      version: "1.0.6",
+      date: "2026-07-05",
+      title: "เพิ่ม Scanner หุ้นสหรัฐ 50 ตัว",
+      notes: [
+        "เพิ่ม universe หุ้นสหรัฐ 50 ตัว พร้อมทองคำ XAUUSD ในหน้า Monitor",
+        "ปรับระบบดึงข้อมูลจริงให้ทยอยอัปเดต batch ละ 8 ตัวต่อรอบ เพื่อให้เหมาะกับ Twelve Data free plan",
+        "จัดเรียง Watchlist ตาม Signal Score เพื่อให้หุ้นที่น่าสนใจขึ้นก่อน",
+        "เพิ่มสถานะ Live/Queued ในรายการหุ้นเพื่อบอกว่าตัวไหนเพิ่งได้ข้อมูลจริงจาก API",
+      ],
+    },
     {
       version: "1.0.5",
       date: "2026-07-05",

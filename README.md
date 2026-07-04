@@ -10,7 +10,7 @@
 
 - Dashboard หน้าตาทันสมัยสำหรับหุ้นสหรัฐและทองคำ
 - ใช้โลโก้ 1-Trade Stock & Gold Radar จาก `assets/1-trade-logo.png`
-- Watchlist พร้อมราคาและสัญญาณ โดยใช้ live data เมื่อ Cloudflare Secrets พร้อม และ fallback เป็น demo data เมื่อยังไม่ได้ตั้งค่า
+- Watchlist/Scanner หุ้นสหรัฐ 50 ตัว + ทองคำ พร้อมราคาและสัญญาณ โดยใช้ live data เมื่อ Cloudflare Secrets พร้อม และ fallback เป็น demo data เมื่อยังไม่ได้ตั้งค่า
 - Trade setup: จุดเข้า, จุดขายทำกำไร, จุดตัดขาดทุน
 - ข่าวล่าสุดจาก Marketaux พร้อมสรุปภาษาไทยแบบอ่านง่าย
 - Telegram alert preview พร้อมข้อความรูปแบบ production และ backend endpoint สำหรับส่งข้อความจริง
@@ -19,6 +19,7 @@
 - Cloudflare Pages Functions:
   - `/api/data` ดึงราคาจาก Twelve Data และข่าวจาก Marketaux
   - `/api/telegram` ส่ง Telegram alert ผ่าน backend
+- โหมด API ฟรีจะทยอยอัปเดต live batch ละ 8 ตัวต่อรอบ เพื่อให้เหมาะกับข้อจำกัด Twelve Data free plan
 - แสดง system version และเครดิต `create by mr.1` บนทุกหน้า
 - มี Release Notes ในหน้า Settings สำหรับติดตามการเปลี่ยนแปลงแต่ละเวอร์ชัน
 - เตรียม Web App Manifest และ mobile meta สำหรับต่อยอดเป็นไอคอนแอปบนโทรศัพท์/แท็บเล็ต

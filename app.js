@@ -122,7 +122,9 @@ let scanBatchOffset = 0;
 let liveBatchText = "0/51";
 const LIVE_BATCH_SIZE = 8;
 const SETTINGS_KEY = "oneTradeSettings";
+const FAVORITES_KEY = "oneTradeFavorites";
 const appSettings = loadSettings();
+let favoriteTickers = loadFavorites();
 
 const stockTable = document.querySelector("#stockTable");
 const newsFeed = document.querySelector("#newsFeed");
@@ -147,6 +149,20 @@ function loadSettings() {
   } catch {
     return {};
   }
+}
+
+function loadFavorites() {
+  try {
+    const saved = window.localStorage.getItem(FAVORITES_KEY);
+    const tickers = saved ? JSON.parse(saved) : ["NVDA", "AAPL", "XAUUSD"];
+    return new Set(Array.isArray(tickers) ? tickers : []);
+  } catch {
+    return new Set(["NVDA", "AAPL", "XAUUSD"]);
+  }
+}
+
+function saveFavorites() {
+  window.localStorage.setItem(FAVORITES_KEY, JSON.stringify([...favoriteTickers]));
 }
 
 function hasValue(value) {
@@ -279,13 +295,17 @@ async function loadLiveData({ manual = false } = {}) {
 
 function renderStocks() {
   const filtered = stocks
-    .filter((stock) => activeFilter === "all" || stock.signal === activeFilter)
+    .filter((stock) => {
+      if (activeFilter === "favorite") return favoriteTickers.has(stock.ticker);
+      return activeFilter === "all" || stock.signal === activeFilter;
+    })
     .slice()
-    .sort((a, b) => b.score - a.score || Math.abs(b.change) - Math.abs(a.change));
+    .sort((a, b) => Number(favoriteTickers.has(b.ticker)) - Number(favoriteTickers.has(a.ticker)) || b.score - a.score || Math.abs(b.change) - Math.abs(a.change));
   stockTable.innerHTML = filtered
     .map((stock) => {
       const active = stock.ticker === selectedTicker ? " active" : "";
       const direction = stock.change >= 0 ? "up" : "down";
+      const favorite = favoriteTickers.has(stock.ticker);
       return `
         <button class="stock-row${active}" type="button" data-ticker="${stock.ticker}">
           <span class="stock-title">
@@ -294,6 +314,9 @@ function renderStocks() {
               <strong>${stock.name}</strong>
               <span class="stock-meta">${stock.live ? "Live" : "Queued"} · Holding 1-3 วัน</span>
             </span>
+          </span>
+          <span class="favorite-cell">
+            <span class="favorite-toggle${favorite ? " active" : ""}" data-favorite="${stock.ticker}" role="button" aria-label="${favorite ? "เอาออกจากรายการโปรด" : "เพิ่มในรายการโปรด"}" title="${favorite ? "เอาออกจากรายการโปรด" : "เพิ่มในรายการโปรด"}">★</span>
           </span>
           <span class="price-cell">
             <strong>${formatUsd(stock.price)}</strong>
@@ -309,7 +332,7 @@ function renderStocks() {
         </button>
       `;
     })
-    .join("");
+    .join("") || `<div class="empty-state">ยังไม่มีรายการโปรด กดดาวบนหุ้นที่สนใจเพื่อเพิ่มเข้ารายการ</div>`;
 }
 
 function renderNews() {
@@ -396,6 +419,23 @@ function showToast(message) {
 }
 
 stockTable.addEventListener("click", (event) => {
+  const favoriteButton = event.target.closest("[data-favorite]");
+  if (favoriteButton) {
+    event.preventDefault();
+    event.stopPropagation();
+    const ticker = favoriteButton.dataset.favorite;
+    if (favoriteTickers.has(ticker)) {
+      favoriteTickers.delete(ticker);
+      showToast(`นำ ${ticker} ออกจากรายการโปรดแล้ว`);
+    } else {
+      favoriteTickers.add(ticker);
+      showToast(`เพิ่ม ${ticker} ในรายการโปรดแล้ว`);
+    }
+    saveFavorites();
+    renderStocks();
+    return;
+  }
+
   const row = event.target.closest(".stock-row");
   if (!row) return;
   selectedTicker = row.dataset.ticker;

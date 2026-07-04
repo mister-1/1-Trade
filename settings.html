@@ -66,8 +66,8 @@
             <h1>ตั้งค่าข้อมูลจริงและ Telegram สำหรับ 1-Trade</h1>
           </div>
           <div class="top-actions">
-            <span class="version-pill" data-app-version>v1.0.6</span>
-            <span class="data-mode" id="dataModeBadge">Mock Data</span>
+            <span class="version-pill" data-app-version>v1.0.8</span>
+            <span class="data-mode" id="dataModeBadge">Checking</span>
             <a class="primary-button nav-link-button" href="./index.html">กลับหน้า Monitor</a>
           </div>
         </header>
@@ -75,116 +75,82 @@
         <section class="settings-panel" id="settingsPanel" aria-label="Backend setup">
           <div class="panel-heading">
             <div>
-              <p class="eyebrow">Configuration</p>
-              <h2>ระบบตั้งค่าหลังบ้าน</h2>
+              <p class="eyebrow">Production Admin</p>
+              <h2>สถานะระบบและ Cloudflare Secrets</h2>
             </div>
-            <span class="live-pill" id="settingsStatus">LOCAL</span>
+            <span class="live-pill" id="settingsStatus">CHECKING</span>
           </div>
 
           <div class="settings-grid">
-            <form class="settings-card" id="telegramForm">
-              <div class="settings-title">
-                <span class="settings-icon">↗</span>
-                <div>
-                  <h3>Telegram Bot</h3>
-                  <p>สำหรับทดสอบในเครื่อง ส่วน production ให้ใส่เป็น Cloudflare Secret</p>
-                </div>
-              </div>
-              <label>
-                Bot Token
-                <input id="telegramToken" name="telegramToken" type="password" autocomplete="off" placeholder="123456:ABC-DEF...">
-              </label>
-              <label>
-                Chat ID
-                <input id="telegramChatId" name="telegramChatId" type="text" autocomplete="off" placeholder="-1001234567890 หรือ user chat id">
-              </label>
-              <label>
-                Alert Channel Name
-                <input id="telegramChannel" name="telegramChannel" type="text" autocomplete="off" placeholder="1-Trade Alerts">
-              </label>
-              <div class="button-row">
-                <button class="primary-button" type="submit">บันทึก Telegram</button>
-                <button class="ghost-button" id="checkTelegramButton" type="button">ตรวจ config</button>
-              </div>
-            </form>
-
-            <form class="settings-card" id="apiForm">
-              <div class="settings-title">
-                <span class="settings-icon">◇</span>
-                <div>
-                  <h3>Market & News APIs</h3>
-                  <p>ใส่ API key สำหรับราคาหุ้น ทองคำ ข่าว และ AI summary</p>
-                </div>
-              </div>
-              <label>
-                Market Data Provider
-                <select id="marketProvider" name="marketProvider">
-                  <option value="twelvedata">Twelve Data</option>
-                  <option value="mock">Mock Data</option>
-                  <option value="marketaux">Marketaux News</option>
-                  <option value="alphavantage">Alpha Vantage</option>
-                </select>
-              </label>
-              <label>
-                Market Data API Key
-                <input id="marketApiKey" name="marketApiKey" type="password" autocomplete="off" placeholder="API key สำหรับหุ้นสหรัฐ">
-              </label>
-              <label>
-                Gold / XAUUSD API Key
-                <input id="goldApiKey" name="goldApiKey" type="password" autocomplete="off" placeholder="API key สำหรับทองคำ">
-              </label>
-              <label>
-                News API Key
-                <input id="newsApiKey" name="newsApiKey" type="password" autocomplete="off" placeholder="Marketaux API key">
-              </label>
-              <label>
-                AI Summary API Key
-                <input id="aiApiKey" name="aiApiKey" type="password" autocomplete="off" placeholder="สำหรับสรุปข่าวเป็นภาษาไทย">
-              </label>
-              <div class="button-row">
-                <button class="primary-button" type="submit">บันทึก API</button>
-                <button class="ghost-button danger" id="clearSettingsButton" type="button">ล้างค่า</button>
-              </div>
-            </form>
-
-            <section class="settings-card status-card" aria-label="Integration status">
+            <section class="settings-card status-card" aria-label="Production data status">
               <div class="settings-title">
                 <span class="settings-icon">⌁</span>
                 <div>
-                  <h3>Integration Status</h3>
-                  <p>สถานะความพร้อมก่อนต่อ production backend</p>
+                  <h3>Production Data</h3>
+                  <p>สถานะข้อมูลจริงจาก Cloudflare Functions</p>
                 </div>
               </div>
               <div class="status-list">
                 <div>
                   <span>Backend API</span>
-                  <strong id="backendStatus">Cloudflare Functions</strong>
-                </div>
-                <div>
-                  <span>Telegram</span>
-                  <strong id="telegramStatus">ยังไม่ตั้งค่า</strong>
+                  <strong id="backendStatus">กำลังตรวจ</strong>
                 </div>
                 <div>
                   <span>Market Data</span>
-                  <strong id="marketStatus">Mock Data</strong>
-                </div>
-                <div>
-                  <span>Gold Data</span>
-                  <strong id="goldStatus">Mock Data</strong>
+                  <strong id="marketStatus">กำลังตรวจ</strong>
                 </div>
                 <div>
                   <span>News Summary</span>
-                  <strong id="newsStatus">Mock News</strong>
+                  <strong id="newsStatus">กำลังตรวจ</strong>
+                </div>
+                <div>
+                  <span>Scanner Universe</span>
+                  <strong id="scannerStatus">กำลังตรวจ</strong>
                 </div>
               </div>
-              <p class="settings-note">หมายเหตุ: ค่าในฟอร์มนี้ใช้ทดสอบ UI ในเครื่องเท่านั้น ระบบ production รุ่นนี้อ่าน key จาก Cloudflare Secrets ผ่าน `/api/data` และ `/api/telegram`</p>
+            </section>
+
+            <section class="settings-card status-card" aria-label="Telegram status">
+              <div class="settings-title">
+                <span class="settings-icon">↗</span>
+                <div>
+                  <h3>Telegram Alert</h3>
+                  <p>สถานะ secret สำหรับส่ง alert จากหน้า Monitor</p>
+                </div>
+              </div>
+              <div class="status-list">
+                <div>
+                  <span>Bot Token</span>
+                  <strong id="telegramTokenStatus">กำลังตรวจ</strong>
+                </div>
+                <div>
+                  <span>Chat ID</span>
+                  <strong id="telegramChatStatus">กำลังตรวจ</strong>
+                </div>
+                <div>
+                  <span>Alert Action</span>
+                  <strong id="telegramStatus">ใช้ปุ่มหน้า Monitor</strong>
+                </div>
+              </div>
+              <p class="settings-note">หน้า Monitor จะเป็นจุดส่ง alert จริง ส่วนหน้านี้ใช้ตรวจว่าระบบหลังบ้านพร้อมหรือไม่</p>
+            </section>
+
+            <section class="settings-card status-card" aria-label="Integration status">
+              <div class="settings-title">
+                <span class="settings-icon">◇</span>
+                <div>
+                  <h3>Cloudflare Secrets</h3>
+                  <p>ชื่อ secret ที่ระบบ production ใช้งาน</p>
+                </div>
+              </div>
               <div class="secret-list" aria-label="Cloudflare secret names">
-                <strong>Cloudflare Secrets ที่ต้องตั้ง</strong>
+                <strong>ตั้งค่าใน Cloudflare Pages เท่านั้น</strong>
                 <code>TWELVE_DATA_API_KEY</code>
                 <code>MARKETAUX_API_KEY</code>
                 <code>TELEGRAM_BOT_TOKEN</code>
                 <code>TELEGRAM_CHAT_ID</code>
               </div>
+              <p class="settings-note">ไม่ควรกรอก API key ลงหน้าเว็บหรือเก็บใน browser เพราะ production อ่านค่าจาก Cloudflare Secrets โดยตรง</p>
             </section>
           </div>
         </section>
@@ -195,7 +161,7 @@
               <p class="eyebrow">Release Notes</p>
               <h2>บันทึกการเปลี่ยนแปลงเวอร์ชัน</h2>
             </div>
-            <span class="live-pill" data-app-version>v1.0.6</span>
+            <span class="live-pill" data-app-version>v1.0.8</span>
           </div>
           <div class="release-list" id="releaseNotesList"></div>
         </section>
@@ -205,7 +171,7 @@
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <div class="creator-credit" aria-label="System credit">
       <span data-created-by>create by mr.1</span>
-      <span data-app-version>v1.0.6</span>
+      <span data-app-version>v1.0.8</span>
     </div>
     <script src="./system-meta.js"></script>
     <script src="./settings.js"></script>

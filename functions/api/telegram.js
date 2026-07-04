@@ -12,6 +12,18 @@ function safeText(value, fallback = "") {
   return String(value || fallback).trim().slice(0, 3500);
 }
 
+export async function onRequestGet(context) {
+  const hasToken = Boolean(context.env.TELEGRAM_BOT_TOKEN);
+  const hasChatId = Boolean(context.env.TELEGRAM_CHAT_ID);
+
+  return json({
+    ok: true,
+    configured: hasToken && hasChatId,
+    hasToken,
+    hasChatId,
+  });
+}
+
 export async function onRequestPost(context) {
   const token = context.env.TELEGRAM_BOT_TOKEN;
   const chatId = context.env.TELEGRAM_CHAT_ID;

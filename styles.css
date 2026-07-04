@@ -397,11 +397,11 @@ button {
 
 .stock-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 122px 90px 92px;
+  grid-template-columns: minmax(0, 1fr) 42px 122px 90px 92px;
   align-items: center;
   gap: 12px;
-  min-height: 70px;
-  padding: 10px 12px;
+  min-height: 74px;
+  padding: 12px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   color: var(--text);
@@ -422,26 +422,42 @@ button {
 .stock-title {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   min-width: 0;
 }
 
 .ticker-chip {
-  display: grid;
+  position: relative;
+  display: inline-grid;
   place-items: center;
-  min-width: 58px;
-  height: 46px;
-  padding: 0 8px;
+  width: clamp(52px, 6vw, 66px);
+  min-width: clamp(52px, 6vw, 66px);
+  height: 42px;
+  padding: 0 9px;
   border-radius: 8px;
-  border: 1px solid rgba(54, 216, 255, 0.36);
-  color: #eafffb;
-  font-size: 0.78rem;
+  border: 1px solid rgba(54, 216, 255, 0.42);
+  color: #f5fffc;
+  font-size: clamp(0.74rem, 1.6vw, 0.84rem);
   font-weight: 900;
+  line-height: 1;
+  overflow: hidden;
   background:
-    linear-gradient(135deg, rgba(54, 216, 255, 0.22), rgba(53, 242, 154, 0.16)),
-    rgba(4, 14, 15, 0.9);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 10px 24px rgba(0, 0, 0, 0.2);
-  text-shadow: 0 1px 8px rgba(54, 216, 255, 0.36);
+    radial-gradient(circle at 50% 0%, rgba(54, 216, 255, 0.38), transparent 52%),
+    linear-gradient(145deg, rgba(53, 242, 154, 0.18), rgba(54, 216, 255, 0.11)),
+    rgba(4, 19, 19, 0.94);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    inset 0 -14px 24px rgba(0, 0, 0, 0.18),
+    0 8px 22px rgba(0, 0, 0, 0.22);
+  text-shadow: 0 1px 10px rgba(54, 216, 255, 0.3);
+}
+
+.ticker-chip::after {
+  position: absolute;
+  inset: 6px 8px auto;
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.42), transparent);
 }
 
 .stock-title strong,
@@ -465,6 +481,42 @@ button {
 .price-cell strong,
 .score-cell strong {
   display: block;
+}
+
+.favorite-cell {
+  display: grid;
+  place-items: center;
+}
+
+.favorite-toggle {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 1rem;
+  line-height: 1;
+  background: rgba(255, 255, 255, 0.035);
+  transition: 160ms ease;
+}
+
+.favorite-toggle:hover,
+.favorite-toggle.active {
+  border-color: rgba(255, 191, 71, 0.5);
+  color: var(--amber);
+  background: rgba(255, 191, 71, 0.12);
+  box-shadow: 0 0 20px rgba(255, 191, 71, 0.14);
+}
+
+.empty-state {
+  padding: 18px;
+  border: 1px dashed rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  color: var(--muted);
+  text-align: center;
+  background: rgba(255, 255, 255, 0.035);
 }
 
 .signal-badge {
@@ -994,10 +1046,9 @@ button {
   }
 
   .stock-row {
-    grid-template-columns: 1fr 90px;
+    grid-template-columns: minmax(0, 1fr) 40px 92px;
   }
 
-  .stock-row .score-cell,
   .stock-row .signal-cell {
     display: none;
   }
@@ -1029,5 +1080,27 @@ button {
   .release-item header {
     grid-template-columns: 1fr;
     align-items: start;
+  }
+
+  .stock-row {
+    grid-template-columns: minmax(0, 1fr) 36px;
+    gap: 10px;
+  }
+
+  .stock-row .price-cell,
+  .stock-row .score-cell {
+    display: none;
+  }
+
+  .ticker-chip {
+    width: 50px;
+    min-width: 50px;
+    height: 38px;
+    font-size: 0.72rem;
+  }
+
+  .favorite-toggle {
+    width: 30px;
+    height: 30px;
   }
 }

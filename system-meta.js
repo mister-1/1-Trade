@@ -1,8 +1,29 @@
 const ONE_TRADE_META = {
-  version: "1.0.6",
+  version: "1.0.8",
   createdBy: "mr.1",
   updatedAt: "2026-07-05",
   releaseNotes: [
+    {
+      version: "1.0.8",
+      date: "2026-07-05",
+      title: "ปรับ Settings เป็น Production Admin",
+      notes: [
+        "เปลี่ยนหน้า Settings จากฟอร์มกรอก API key ในเครื่องเป็นหน้าแสดงสถานะ production",
+        "เพิ่มการตรวจสถานะ `/api/data` และ `/api/telegram` โดยไม่เปิดเผย secret",
+        "คงหน้า Settings ไว้สำหรับ admin, Cloudflare Secrets และ Release Notes เท่านั้น",
+      ],
+    },
+    {
+      version: "1.0.7",
+      date: "2026-07-05",
+      title: "เพิ่มรายการโปรดและปรับ Watchlist",
+      notes: [
+        "เพิ่มปุ่มดาวเพื่อบันทึกหุ้นที่สนใจเป็นรายการโปรดในเครื่องผู้ใช้",
+        "เพิ่มตัวกรองรายการโปรดในหน้า Watchlist",
+        "ปรับ ticker chip ให้ทันสมัยขึ้น ขนาดนิ่งขึ้น และไม่ล้นกรอบบนมือถือ",
+        "ปรับ layout แถวหุ้นบนหน้าจอเล็กให้เน้นชื่อหุ้นและปุ่มรายการโปรดอ่านง่ายขึ้น",
+      ],
+    },
     {
       version: "1.0.6",
       date: "2026-07-05",

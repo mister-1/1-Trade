@@ -135,6 +135,7 @@ let scanState = {
     tradable: 0,
   },
 };
+let autoScanState = null;
 const SETTINGS_KEY = "oneTradeSettings";
 const FAVORITES_KEY = "oneTradeFavorites";
 const appSettings = loadSettings();
@@ -147,6 +148,10 @@ const scanBatchLabel = document.querySelector("#scanBatchLabel");
 const scanUpdatedLabel = document.querySelector("#scanUpdatedLabel");
 const scanProgressBar = document.querySelector("#scanProgressBar");
 const scanBatchSymbols = document.querySelector("#scanBatchSymbols");
+const autoScanBadge = document.querySelector("#autoScanBadge");
+const autoScanStatus = document.querySelector("#autoScanStatus");
+const autoSignalList = document.querySelector("#autoSignalList");
+const socialNotesList = document.querySelector("#socialNotesList");
 
 function formatUsd(value) {
   const numeric = Number(value);
@@ -272,6 +277,25 @@ function mergeLiveAssets(assets, updatedAt) {
   });
 }
 
+function mergeAutoScanSignals(signals) {
+  if (!Array.isArray(signals)) return;
+
+  signals.forEach((signal) => {
+    const stock = stocks.find((item) => item.ticker === signal.ticker);
+    if (!stock) return;
+
+    stock.confidence = signal.confidence;
+    stock.autoSignal = signal.signal;
+    stock.engineScores = signal.scores;
+    stock.score = signal.confidence;
+    stock.technical = signal.scores?.technical ?? stock.technical;
+    stock.news = signal.scores?.news ?? stock.news;
+    stock.market = signal.scores?.market ?? stock.market;
+    stock.riskScore = signal.scores?.risk ?? stock.riskScore;
+    stock.reason = `${signal.signal} | ${signal.reasons?.join(" | ") || stock.reason}`;
+  });
+}
+
 function setDataMode(mode, updatedAt, meta = {}) {
   const badge = document.querySelector("#dataModeBadge");
   if (!badge) return;
@@ -337,6 +361,91 @@ function renderScanStatus() {
   scanBatchSymbols.textContent = scanState.symbols.length
     ? `Batch ปัจจุบัน: ${scanState.symbols.join(", ")} · fresh ${scanState.freshness.fresh || 0} · stale ${scanState.freshness.stale || 0}`
     : "ระบบจะทยอยสแกนตามข้อจำกัด API ฟรี";
+}
+
+function setElementText(selector, text) {
+  const element = document.querySelector(selector);
+  if (element) element.textContent = text;
+}
+
+function renderAutoScan(payload) {
+  autoScanState = payload;
+  const candidates = payload?.candidates || [];
+  const ranked = payload?.ranked || [];
+  const top = candidates[0] || ranked[0];
+  const backtest = payload?.backtest || {};
+
+  if (autoScanBadge) {
+    autoScanBadge.textContent = top ? `Auto ${top.ticker} ${top.confidence}` : "Auto Scan";
+    autoScanBadge.classList.toggle("ready", Boolean(top));
+  }
+
+  if (autoScanStatus) {
+    autoScanStatus.textContent = candidates.length ? "ACTIVE" : "WATCH";
+  }
+
+  setElementText("#autoTopTicker", top?.ticker || "--");
+  setElementText("#autoTopSignal", top?.signal || "Waiting");
+  setElementText("#autoTopConfidence", top ? `${top.confidence}/100` : "--");
+  setElementText("#autoScanMode", payload?.mode || "scan");
+  setElementText("#backtestWinRate", Number.isFinite(backtest.winRate) ? `${backtest.winRate}%` : "--");
+  setElementText("#backtestStats", `${backtest.total || 0} signals | ${backtest.open || 0} open`);
+
+  if (autoSignalList) {
+    const visible = (candidates.length ? candidates : ranked).slice(0, 5);
+    autoSignalList.innerHTML = visible
+      .map((signal) => `
+        <article class="auto-signal">
+          <strong>${signal.ticker}</strong>
+          <div>
+            <strong>${signal.signal} | ${signal.confidence}/100</strong>
+            <p>${(signal.reasons || []).slice(0, 3).join(" | ")}</p>
+          </div>
+          <span class="signal-badge signal-${signal.signal === "AVOID" ? "risk" : signal.signal === "BUY WATCH" ? "buy" : "watch"}">${signal.signal}</span>
+        </article>
+      `)
+      .join("") || `<div class="empty-state">No auto-scan result yet.</div>`;
+  }
+
+  if (socialNotesList) {
+    const notes = payload?.socialNotes || [];
+    socialNotesList.innerHTML = notes
+      .slice(0, 4)
+      .map((note) => `
+        <article class="social-note">
+          <span>${note.source || "manual"} | ${(note.symbols || []).join(", ") || "MARKET"}</span>
+          <strong>${note.title || "Social note"}</strong>
+          <p>${note.note || note.url || "No note text"}</p>
+        </article>
+      `)
+      .join("") || `<div class="empty-state">No social notes yet. Add notes through /api/social with AUTO_SCAN_SECRET.</div>`;
+  }
+}
+
+async function loadAutoScan() {
+  try {
+    const response = await fetch("/api/scan?round=dashboard", {
+      cache: "no-store",
+      headers: { accept: "application/json" },
+    });
+
+    if (!response.ok) throw new Error(`scan ${response.status}`);
+    const payload = await response.json();
+    if (!payload.ok) throw new Error(payload.message || "scan_failed");
+
+    mergeAutoScanSignals(payload.ranked);
+    renderAutoScan(payload);
+    renderStocks();
+    renderSelectedStock();
+  } catch {
+    if (autoScanBadge) {
+      autoScanBadge.textContent = "Auto Local";
+      autoScanBadge.classList.remove("ready");
+    }
+    if (autoSignalList) {
+      autoSignalList.innerHTML = `<div class="empty-state">Auto scan works on Cloudflare Functions production URL.</div>`;
+    }
+  }
 }
 
 function formatStockUpdatedAt(value) {
@@ -427,7 +536,7 @@ function renderStocks() {
               <strong>${stock.name}</strong>
               <span class="stock-meta">
                 <span class="scan-pill${getStockScanClass(stock)}">${getStockScanText(stock)}</span>
-                <span>Holding 1-3 วัน</span>
+                <span>${stock.autoSignal || "Holding 1-3 วัน"}</span>
               </span>
             </span>
           </span>
@@ -600,5 +709,7 @@ renderSelectedStock();
 setDataMode("demo");
 renderScanStatus();
 loadLiveData();
+loadAutoScan();
 window.setInterval(simulateTick, 4200);
 window.setInterval(loadLiveData, LIVE_REFRESH_MS);
+window.setInterval(loadAutoScan, 300000);

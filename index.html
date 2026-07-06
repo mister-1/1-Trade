@@ -66,8 +66,9 @@
             <h1>1-Trade วิเคราะห์หุ้นสหรัฐและทองคำระยะสั้น</h1>
           </div>
           <div class="top-actions">
-            <span class="version-pill" data-app-version>v1.0.11</span>
+            <span class="version-pill" data-app-version>v1.1.0</span>
             <span class="data-mode" id="dataModeBadge">Loading Data</span>
+            <span class="data-mode" id="autoScanBadge">Auto Scan</span>
             <button id="refreshButton" class="icon-button" type="button" title="รีเฟรชข้อมูล">⟳</button>
             <button id="telegramButton" class="primary-button" type="button">ส่ง Telegram Alert</button>
           </div>
@@ -158,6 +159,48 @@
           </aside>
         </section>
 
+        <section class="automation-grid">
+          <section class="auto-scan-panel" aria-label="Auto scanner">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Auto Scanner</p>
+                <h2>Pre-market Telegram engine</h2>
+              </div>
+              <span class="live-pill" id="autoScanStatus">READY</span>
+            </div>
+            <div class="auto-summary">
+              <article>
+                <span>Top Candidate</span>
+                <strong id="autoTopTicker">--</strong>
+                <em id="autoTopSignal">Waiting</em>
+              </article>
+              <article>
+                <span>Confidence</span>
+                <strong id="autoTopConfidence">--</strong>
+                <em id="autoScanMode">scan</em>
+              </article>
+              <article>
+                <span>Backtest Win Rate</span>
+                <strong id="backtestWinRate">--</strong>
+                <em id="backtestStats">0 signals</em>
+              </article>
+            </div>
+            <div class="auto-list" id="autoSignalList"></div>
+          </section>
+
+          <section class="social-panel" aria-label="Social intelligence">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Social Intelligence</p>
+                <h2>X/Facebook notes layer</h2>
+              </div>
+              <span class="live-pill" id="socialStatus">MANUAL</span>
+            </div>
+            <p class="setup-reason">Use this layer for links or notes found from X.com, Facebook, Thai pages, or analyst posts. It supports the score but does not scrape protected sites automatically.</p>
+            <div class="social-notes" id="socialNotesList"></div>
+          </section>
+        </section>
+
         <section class="insight-grid">
           <section class="news-panel" aria-label="Thai market news">
             <div class="panel-heading">
@@ -216,7 +259,7 @@
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <div class="creator-credit" aria-label="System credit">
       <span data-created-by>create by mr.1</span>
-      <span data-app-version>v1.0.11</span>
+      <span data-app-version>v1.1.0</span>
     </div>
     <script src="./system-meta.js"></script>
     <script src="./app.js"></script>

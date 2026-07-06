@@ -53,7 +53,7 @@ const SCAN_UNIVERSE = [
 ];
 
 const DEFAULT_SYMBOLS = SCAN_UNIVERSE.map((asset) => asset.ticker);
-const MAX_FREE_BATCH = 8;
+const MAX_FREE_BATCH = 60;
 const MARKET_DATA_STALE_MS = 2 * 60 * 1000;
 const TWELVE_SYMBOL_MAP = {
   XAUUSD: "XAU/USD",

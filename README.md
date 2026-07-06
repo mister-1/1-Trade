@@ -38,8 +38,47 @@
 - `MARKETAUX_API_KEY` สำหรับข่าวหุ้นและตลาดจาก Marketaux
 - `TELEGRAM_BOT_TOKEN` สำหรับ Telegram Bot
 - `TELEGRAM_CHAT_ID` สำหรับห้องหรือผู้รับ alert
+- `AUTO_SCAN_SECRET` สำหรับป้องกัน endpoint `/api/scan` และ `/api/social` เมื่อเรียกแบบ POST
+
+KV bindings ที่แนะนำ:
+
+- `SIGNAL_JOURNAL` ใช้เก็บประวัติสัญญาณเพื่อวัด win rate/backtest summary
+- `SOCIAL_NOTES` ใช้เก็บ social intelligence notes จาก X.com, Facebook, ข่าวไทย หรือ analyst links ที่ admin เพิ่มเอง
 
 หลังเพิ่มหรือแก้ secret ให้ redeploy project อีกครั้ง
+
+## Auto scan และ Telegram schedule
+
+ระบบเพิ่ม endpoint `/api/scan` สำหรับสแกนทั้ง universe, ให้ confidence score, สร้าง Telegram message และบันทึก signal journal เมื่อเรียกแบบ POST
+
+- `GET /api/scan?round=dashboard` ดูผล scan โดยไม่ส่ง Telegram
+- `POST /api/scan?round=pre-market` ส่ง Telegram และบันทึก journal ถ้า `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` พร้อม
+- ถ้าตั้ง `AUTO_SCAN_SECRET` ต้องส่ง header `x-auto-scan-secret`
+
+ตัวอย่าง worker สำหรับ Cloudflare Cron อยู่ที่ `cloudflare-auto-scan-worker.js` โดยตั้ง secret/variable:
+
+- `ONE_TRADE_SCAN_URL=https://1-trade.pages.dev/api/scan`
+- `AUTO_SCAN_SECRET` ค่าเดียวกับ Pages secret
+- ตัวอย่าง schedule อยู่ที่ `wrangler.auto-scan.example.toml`
+
+รอบเวลาที่แนะนำสำหรับหุ้น US ตามเวลาไทย:
+
+- 17:30-18:30 ก่อนตลาดเปิด 2-3 ชั่วโมง
+- 20:15-20:35 ก่อนเปิด/ตอนเปิดตลาด
+- 21:00 ยืนยันหลังตลาดเปิดประมาณ 30 นาที
+
+Social intelligence ใช้ `/api/social` เพื่อเพิ่ม note/ลิงก์ที่ admin ตรวจเจอจาก X.com, Facebook หรือข่าวไทย โดยไม่ scrape หน้าเว็บอัตโนมัติ:
+
+```json
+{
+  "source": "x.com",
+  "title": "NVDA demand discussion",
+  "note": "Positive discussion from Thai trading community",
+  "url": "https://x.com/...",
+  "symbols": ["NVDA"],
+  "sentiment": 0.45
+}
+```
 
 ## ขั้นต่อไปสำหรับ production
 

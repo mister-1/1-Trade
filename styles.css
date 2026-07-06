@@ -274,7 +274,8 @@ button {
 
 .market-strip,
 .workspace-grid,
-.insight-grid {
+.insight-grid,
+.automation-grid {
   display: grid;
   gap: 16px;
 }
@@ -290,6 +291,8 @@ button {
 .news-panel,
 .alert-panel,
 .engine-panel,
+.auto-scan-panel,
+.social-panel,
 .settings-panel,
 .settings-card {
   border: 1px solid var(--line);
@@ -347,14 +350,78 @@ button {
   margin-bottom: 16px;
 }
 
+.automation-grid {
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  margin-bottom: 16px;
+}
+
 .watch-panel,
 .signal-panel,
 .news-panel,
 .alert-panel,
 .engine-panel,
+.auto-scan-panel,
+.social-panel,
 .settings-panel,
 .settings-card {
   padding: 20px;
+}
+
+.auto-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.auto-summary article,
+.auto-signal,
+.social-note {
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.auto-summary span,
+.auto-summary em,
+.social-note span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-style: normal;
+}
+
+.auto-summary strong {
+  display: block;
+  margin: 6px 0 3px;
+  color: var(--text);
+  font-size: 1.35rem;
+}
+
+.auto-list,
+.social-notes {
+  display: grid;
+  gap: 8px;
+}
+
+.auto-signal {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.auto-signal strong,
+.social-note strong {
+  color: var(--text);
+}
+
+.auto-signal p,
+.social-note p {
+  margin: 4px 0 0;
+  color: #c9d9d6;
+  line-height: 1.55;
 }
 
 .panel-heading {
@@ -1089,6 +1156,7 @@ button {
 
   .market-strip,
   .insight-grid,
+  .automation-grid,
   .settings-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1154,7 +1222,16 @@ button {
   .market-strip,
   .workspace-grid,
   .insight-grid,
+  .automation-grid,
   .settings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .auto-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .auto-signal {
     grid-template-columns: 1fr;
   }
 

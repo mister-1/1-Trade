@@ -76,6 +76,28 @@ async function checkTelegramStatus() {
   }
 }
 
-Promise.all([checkDataStatus(), checkTelegramStatus()]).catch(() => {
+async function checkAutoScanStatus() {
+  try {
+    const response = await fetch("/api/scan?round=settings", {
+      cache: "no-store",
+      headers: { accept: "application/json" },
+    });
+    if (!response.ok) throw new Error(`Scan ${response.status}`);
+
+    const payload = await response.json();
+    const top = payload.candidates?.[0] || payload.ranked?.[0];
+    setStatusText("#autoScanApiStatus", "Scan API ready", true);
+    setStatusText("#autoScanTopStatus", top ? `${top.ticker} ${top.confidence}/100` : "No candidate", Boolean(top));
+    setStatusText("#journalStatus", payload.backtest?.total ? `${payload.backtest.total} signals` : "KV optional / no journal yet", true);
+    setStatusText("#socialNotesStatus", `${payload.socialNotes?.length || 0} notes`, true);
+  } catch {
+    setStatusText("#autoScanApiStatus", "Check on production URL", false);
+    setStatusText("#autoScanTopStatus", "Not available", false);
+    setStatusText("#journalStatus", "Needs SIGNAL_JOURNAL KV for history", false);
+    setStatusText("#socialNotesStatus", "Needs SOCIAL_NOTES KV for notes", false);
+  }
+}
+
+Promise.all([checkDataStatus(), checkTelegramStatus(), checkAutoScanStatus()]).catch(() => {
   showToast("ยังตรวจสถานะ production ไม่สำเร็จ");
 });

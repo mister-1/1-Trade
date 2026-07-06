@@ -66,7 +66,7 @@
             <h1>ตั้งค่าข้อมูลจริงและ Telegram สำหรับ 1-Trade</h1>
           </div>
           <div class="top-actions">
-            <span class="version-pill" data-app-version>v1.0.11</span>
+            <span class="version-pill" data-app-version>v1.1.0</span>
             <span class="data-mode" id="dataModeBadge">Checking</span>
             <a class="primary-button nav-link-button" href="./index.html">กลับหน้า Monitor</a>
           </div>
@@ -152,8 +152,39 @@
                 <code>MARKETAUX_API_KEY</code>
                 <code>TELEGRAM_BOT_TOKEN</code>
                 <code>TELEGRAM_CHAT_ID</code>
+                <code>AUTO_SCAN_SECRET</code>
+                <code>SIGNAL_JOURNAL</code>
+                <code>SOCIAL_NOTES</code>
               </div>
               <p class="settings-note">ไม่ควรกรอก API key ลงหน้าเว็บหรือเก็บใน browser เพราะ production อ่านค่าจาก Cloudflare Secrets โดยตรง</p>
+            </section>
+
+            <section class="settings-card status-card" aria-label="Auto scan status">
+              <div class="settings-title">
+                <span class="settings-icon">A</span>
+                <div>
+                  <h3>Auto Scanner</h3>
+                  <p>ระบบสแกนอัตโนมัติ บันทึก signal journal และส่ง Telegram</p>
+                </div>
+              </div>
+              <div class="status-list">
+                <div>
+                  <span>Scan API</span>
+                  <strong id="autoScanApiStatus">กำลังตรวจ</strong>
+                </div>
+                <div>
+                  <span>Top Confidence</span>
+                  <strong id="autoScanTopStatus">กำลังตรวจ</strong>
+                </div>
+                <div>
+                  <span>Signal Journal</span>
+                  <strong id="journalStatus">รอตรวจ</strong>
+                </div>
+                <div>
+                  <span>Social Notes</span>
+                  <strong id="socialNotesStatus">รอตรวจ</strong>
+                </div>
+              </div>
             </section>
           </div>
         </section>
@@ -164,7 +195,7 @@
               <p class="eyebrow">Release Notes</p>
               <h2>บันทึกการเปลี่ยนแปลงเวอร์ชัน</h2>
             </div>
-            <span class="live-pill" data-app-version>v1.0.11</span>
+            <span class="live-pill" data-app-version>v1.1.0</span>
           </div>
           <div class="release-list" id="releaseNotesList"></div>
         </section>
@@ -174,7 +205,7 @@
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <div class="creator-credit" aria-label="System credit">
       <span data-created-by>create by mr.1</span>
-      <span data-app-version>v1.0.11</span>
+      <span data-app-version>v1.1.0</span>
     </div>
     <script src="./system-meta.js"></script>
     <script src="./settings.js"></script>

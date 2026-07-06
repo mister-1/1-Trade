@@ -1,8 +1,19 @@
 const ONE_TRADE_META = {
-  version: "1.0.11",
+  version: "1.1.0",
   createdBy: "mr.1",
-  updatedAt: "2026-07-05",
+  updatedAt: "2026-07-06",
   releaseNotes: [
+    {
+      version: "1.1.0",
+      date: "2026-07-06",
+      title: "เพิ่ม auto scanner, confidence engine และ Telegram schedule",
+      notes: [
+        "เพิ่ม `/api/scan` สำหรับสแกนอัตโนมัติ จัดอันดับ confidence และส่ง Telegram ผ่าน POST",
+        "เพิ่ม signal journal/backtest summary ผ่าน KV binding `SIGNAL_JOURNAL` และ social notes ผ่าน `SOCIAL_NOTES`",
+        "เพิ่มหน้า Monitor/Settings สำหรับดู auto scan, top candidate, win rate และ social intelligence notes",
+        "เพิ่มตัวอย่าง `cloudflare-auto-scan-worker.js` สำหรับตั้ง Cloudflare Cron ก่อนตลาดเปิดและตอนตลาดเปิด",
+      ],
+    },
     {
       version: "1.0.11",
       date: "2026-07-05",

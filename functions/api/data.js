@@ -113,6 +113,12 @@ function getLiveBatch(symbols, request) {
   return { batchSymbols, liveLimit, offset, nextOffset };
 }
 
+function shouldFetchNews(request) {
+  const url = new URL(request.url);
+  const value = String(url.searchParams.get("news") || "").toLowerCase();
+  return value === "1" || value === "true" || value === "yes";
+}
+
 function toNumber(value) {
   const next = Number(value);
   return Number.isFinite(next) ? next : null;
@@ -400,11 +406,12 @@ async function fetchMarketaux(symbols, apiKey) {
 export async function onRequestGet(context) {
   const symbols = getSymbols(context.request);
   const liveBatch = getLiveBatch(symbols, context.request);
+  const includeNews = shouldFetchNews(context.request);
   const now = new Date().toISOString();
 
   const [marketResult, newsResult] = await Promise.allSettled([
     fetchMarketData(liveBatch.batchSymbols, context.env),
-    fetchMarketaux(liveBatch.batchSymbols, context.env.MARKETAUX_API_KEY),
+    includeNews ? fetchMarketaux(liveBatch.batchSymbols, context.env.MARKETAUX_API_KEY) : Promise.resolve([]),
   ]);
 
   const marketPayload = marketResult.status === "fulfilled" ? marketResult.value : { assets: [], providerNames: [], warnings: ["market_data_unavailable"] };
@@ -434,7 +441,7 @@ export async function onRequestGet(context) {
     provider: {
       market: marketPayload.providerNames[0] || "demo",
       marketProviders: marketPayload.providerNames,
-      news: liveNews.length > 0 ? "marketaux" : "demo",
+      news: liveNews.length > 0 ? "marketaux" : includeNews ? "demo" : "skipped",
     },
     freshness,
     assets: mergedAssets,
@@ -442,6 +449,7 @@ export async function onRequestGet(context) {
     warnings: [
       ...(marketResult.status === "rejected" ? ["market_data_unavailable"] : marketPayload.warnings),
       ...(newsResult.status === "rejected" ? ["news_unavailable"] : []),
+      ...(!includeNews ? ["news_skipped_to_save_quota"] : []),
     ],
   });
 }

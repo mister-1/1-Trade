@@ -37,6 +37,7 @@ async function fetchDataPayload(context) {
   endpoint.searchParams.set("symbols", symbols);
   endpoint.searchParams.set("liveLimit", String(DATA_BATCH_SIZE));
   endpoint.searchParams.set("offset", "0");
+  endpoint.searchParams.set("news", "1");
 
   const response = await fetch(endpoint.toString(), {
     headers: { accept: "application/json" },

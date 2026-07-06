@@ -1,8 +1,18 @@
 const ONE_TRADE_META = {
-  version: "1.1.0",
+  version: "1.1.1",
   createdBy: "mr.1",
   updatedAt: "2026-07-06",
   releaseNotes: [
+    {
+      version: "1.1.1",
+      date: "2026-07-06",
+      title: "ลดการใช้ Marketaux quota",
+      notes: [
+        "ปรับ `/api/data` ให้ดึง Marketaux เฉพาะเมื่อส่ง `news=1` เพื่อลดการใช้โควต้ารายวัน",
+        "หน้า Monitor ยัง refresh ราคาทุก 30 วินาที แต่ขอข่าวทุก 15 นาทีหรือเมื่อกด refresh เอง",
+        "ให้ `/api/scan` ขอข่าวเฉพาะรอบ auto scan เพื่อใช้เป็นข้อมูลประกอบ Telegram alert",
+      ],
+    },
     {
       version: "1.1.0",
       date: "2026-07-06",

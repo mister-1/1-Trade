@@ -123,6 +123,8 @@ let liveBatchText = "0/51";
 let marketProviderText = "Fallback";
 const LIVE_BATCH_SIZE = 8;
 const LIVE_REFRESH_MS = 30000;
+const NEWS_REFRESH_MS = 15 * 60 * 1000;
+let lastNewsFetchAt = 0;
 let scanState = {
   batchIndex: 0,
   totalBatches: Math.ceil(SCAN_UNIVERSE.length / LIVE_BATCH_SIZE),
@@ -473,7 +475,9 @@ function getTickerLengthClass(ticker) {
 async function loadLiveData({ manual = false } = {}) {
   try {
     const symbols = SCAN_UNIVERSE.map((asset) => asset.ticker).join(",");
-    const response = await fetch(`/api/data?symbols=${encodeURIComponent(symbols)}&liveLimit=${LIVE_BATCH_SIZE}&offset=${scanBatchOffset}`, {
+    const includeNews = manual || Date.now() - lastNewsFetchAt > NEWS_REFRESH_MS;
+    const newsParam = includeNews ? "&news=1" : "";
+    const response = await fetch(`/api/data?symbols=${encodeURIComponent(symbols)}&liveLimit=${LIVE_BATCH_SIZE}&offset=${scanBatchOffset}${newsParam}`, {
       cache: "no-store",
       headers: { accept: "application/json" },
     });
@@ -492,6 +496,7 @@ async function loadLiveData({ manual = false } = {}) {
 
     if (Array.isArray(payload.news) && payload.news.length > 0) {
       newsItems = payload.news;
+      if (includeNews) lastNewsFetchAt = Date.now();
     }
 
     setDataMode(payload.mode, normalizeUpdatedAt(payload.updatedAt), {

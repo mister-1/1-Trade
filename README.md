@@ -80,6 +80,14 @@ Social intelligence ใช้ `/api/social` เพื่อเพิ่ม note/
 }
 ```
 
+## Marketaux quota guard
+
+เพื่อประหยัดโควต้า Marketaux, `/api/data` จะไม่ดึงข่าวทุกครั้งโดยอัตโนมัติแล้ว ต้องส่ง `news=1` เมื่อต้องการข่าวจริง เช่น `/api/data?liveLimit=8&news=1`
+
+- หน้า Monitor จะ refresh ราคาทุก 30 วินาที แต่ขอข่าวทุก 15 นาทีหรือเมื่อกด refresh เอง
+- `/api/scan` ขอข่าวเฉพาะรอบสแกนอัตโนมัติ
+- ถ้า response มี warning `news_skipped_to_save_quota` แปลว่ารอบนั้นตั้งใจข้ามข่าวเพื่อประหยัดโควต้า
+
 ## ขั้นต่อไปสำหรับ production
 
 - สมัคร Twelve Data และ Marketaux free plan แล้วใส่ key เป็น Cloudflare Secrets

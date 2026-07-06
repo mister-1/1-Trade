@@ -28,7 +28,7 @@ function showToast(message) {
 
 async function checkDataStatus() {
   try {
-    const response = await fetch("/api/data?liveLimit=8&offset=0", {
+    const response = await fetch("/api/data?liveLimit=8&offset=0&news=1", {
       cache: "no-store",
       headers: { accept: "application/json" },
     });

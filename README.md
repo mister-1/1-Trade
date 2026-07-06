@@ -18,10 +18,11 @@
 - Engine ให้คะแนนจาก technical, news, market trend และ risk control
 - หน้า `settings.html` สำหรับ Production Admin, ตรวจสถานะ API/Telegram และดู Release Notes
 - Cloudflare Pages Functions:
-  - `/api/data` ดึงราคาจาก Twelve Data และข่าวจาก Marketaux
+  - `/api/data` ดึงราคาจาก provider หลายเจ้า เช่น Twelve Data, Finnhub, Polygon/Massive และข่าวจาก Marketaux
   - `/api/telegram` ส่ง Telegram alert ผ่าน backend
 - โหมด API ฟรีจะทยอยอัปเดต live batch ละ 8 ตัวต่อรอบ เพื่อให้เหมาะกับข้อจำกัด Twelve Data free plan
-- แสดง Scan Progress, batch ปัจจุบัน และสถานะรายตัวว่า Live now, Updated หรือ Waiting
+- แสดง Scan Progress, batch ปัจจุบัน และสถานะรายตัวว่า Fresh, Stale, Updated หรือ Waiting
+- แสดง freshness, stale status, อายุข้อมูล และ bid/ask metadata ถ้า provider ส่งมา เพื่อไม่ใช้ข้อมูลเก่าไปตัดสินใจซื้อขาย
 - ปรับ ticker badge ให้รองรับ ticker สั้น/ยาวบนมือถือโดยไม่ล้นกรอบ
 - แสดง system version และเครดิต `create by mr.1` บนทุกหน้า
 - มี Release Notes ในหน้า Settings สำหรับติดตามการเปลี่ยนแปลงแต่ละเวอร์ชัน
@@ -32,6 +33,8 @@
 ตั้งค่าใน Cloudflare Pages > Settings > Variables and Secrets > Add แล้วเลือก Encrypt:
 
 - `TWELVE_DATA_API_KEY` สำหรับหุ้นสหรัฐและ XAU/USD จาก Twelve Data
+- `FINNHUB_API_KEY` สำหรับ quote realtime/near realtime จาก Finnhub
+- `POLYGON_API_KEY` หรือ `MASSIVE_API_KEY` สำหรับ last trade ของหุ้นสหรัฐจาก Polygon/Massive
 - `MARKETAUX_API_KEY` สำหรับข่าวหุ้นและตลาดจาก Marketaux
 - `TELEGRAM_BOT_TOKEN` สำหรับ Telegram Bot
 - `TELEGRAM_CHAT_ID` สำหรับห้องหรือผู้รับ alert

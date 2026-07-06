@@ -571,6 +571,12 @@ button {
   background: rgba(54, 216, 255, 0.08);
 }
 
+.scan-pill.stale {
+  border-color: rgba(255, 91, 110, 0.36);
+  color: var(--red);
+  background: rgba(255, 91, 110, 0.09);
+}
+
 .stock-title strong,
 .price-cell strong,
 .score-cell strong {

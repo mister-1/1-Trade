@@ -35,12 +35,16 @@ async function checkDataStatus() {
     if (!response.ok) throw new Error(`API ${response.status}`);
 
     const payload = await response.json();
-    const marketReady = payload.provider?.market === "twelvedata";
+    const marketProviders = payload.provider?.marketProviders || [];
+    const marketReady = marketProviders.length > 0;
     const newsReady = payload.provider?.news === "marketaux";
     const ready = marketReady && newsReady;
+    const marketLabel = marketProviders.length ? marketProviders.join(" + ") : "Fallback Data";
+    const freshCount = payload.freshness?.fresh || 0;
+    const staleCount = payload.freshness?.stale || 0;
 
     setStatusText("#backendStatus", "Cloudflare Functions พร้อม", true);
-    setStatusText("#marketStatus", marketReady ? "Twelve Data Live" : "Fallback Data", marketReady);
+    setStatusText("#marketStatus", marketReady ? `${marketLabel} · fresh ${freshCount} stale ${staleCount}` : "Fallback Data", marketReady);
     setStatusText("#newsStatus", newsReady ? "Marketaux Live" : "Fallback News", newsReady);
     setStatusText("#scannerStatus", `${payload.universeSize || 0} รายการ · batch ${payload.liveBatch?.size || 0}`, true);
     setMode(ready ? "Production Live" : "Partial Live", ready);

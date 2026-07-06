@@ -1,8 +1,18 @@
 const ONE_TRADE_META = {
-  version: "1.0.10",
+  version: "1.0.11",
   createdBy: "mr.1",
   updatedAt: "2026-07-05",
   releaseNotes: [
+    {
+      version: "1.0.11",
+      date: "2026-07-05",
+      title: "เพิ่ม market data provider และ freshness guard",
+      notes: [
+        "ปรับ `/api/data` ให้ไม่ cache ราคาและรองรับ Twelve Data, Finnhub และ Polygon/Massive ผ่าน Cloudflare Secrets",
+        "เพิ่ม metadata รายตัว เช่น source, age, freshness, bid/ask และ stale status",
+        "ปรับหน้า Monitor ให้รีเฟรชถี่ขึ้นและแสดง Fresh/Stale เพื่อไม่ใช้ข้อมูลเก่าตัดสินใจซื้อขาย",
+      ],
+    },
     {
       version: "1.0.10",
       date: "2026-07-05",

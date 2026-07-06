@@ -120,13 +120,20 @@ let activeFilter = "all";
 let liveDataMode = false;
 let scanBatchOffset = 0;
 let liveBatchText = "0/51";
+let marketProviderText = "Fallback";
 const LIVE_BATCH_SIZE = 8;
+const LIVE_REFRESH_MS = 30000;
 let scanState = {
   batchIndex: 0,
   totalBatches: Math.ceil(SCAN_UNIVERSE.length / LIVE_BATCH_SIZE),
   progress: 0,
   symbols: [],
   updatedAt: "",
+  freshness: {
+    fresh: 0,
+    stale: 0,
+    tradable: 0,
+  },
 };
 const SETTINGS_KEY = "oneTradeSettings";
 const FAVORITES_KEY = "oneTradeFavorites";
@@ -205,6 +212,28 @@ function getTradingSetup(stock, price, change) {
 
 stocks = SCAN_UNIVERSE.map(createSeedStock);
 
+function formatAge(ageMs) {
+  const numeric = Number(ageMs);
+  if (!Number.isFinite(numeric)) return "";
+  if (numeric < 1000) return "now";
+  if (numeric < 60000) return `${Math.round(numeric / 1000)}s`;
+  return `${Math.round(numeric / 60000)}m`;
+}
+
+function getFreshnessLabel(stock) {
+  if (!stock.live) return stock.updatedAt ? `Updated ${stock.updatedAt}` : "Waiting";
+  if (stock.freshness === "stale") return "Stale";
+  const age = formatAge(stock.ageMs);
+  return age ? `Fresh ${age}` : "Fresh";
+}
+
+function getQuoteText(stock) {
+  if (Number.isFinite(stock.bid) && Number.isFinite(stock.ask)) {
+    return `Bid ${formatUsd(stock.bid)} / Ask ${formatUsd(stock.ask)}`;
+  }
+  return "ไม่มี bid/ask จาก provider นี้ ใช้เป็นสัญญาณเฝ้าดูเท่านั้น";
+}
+
 function mergeLiveAssets(assets, updatedAt) {
   assets.forEach((asset) => {
     let stock = stocks.find((item) => item.ticker === asset.ticker);
@@ -221,6 +250,15 @@ function mergeLiveAssets(assets, updatedAt) {
     stock.name = asset.name || stock.name;
     stock.price = price;
     stock.change = Number.isFinite(change) ? change : stock.change;
+    stock.bid = Number.isFinite(Number(asset.bid)) ? Number(asset.bid) : null;
+    stock.ask = Number.isFinite(Number(asset.ask)) ? Number(asset.ask) : null;
+    stock.source = asset.source || "";
+    stock.sourceLabel = asset.sourceLabel || "";
+    stock.sourceTimestamp = asset.sourceTimestamp || "";
+    stock.receivedAt = asset.receivedAt || "";
+    stock.ageMs = Number.isFinite(Number(asset.ageMs)) ? Number(asset.ageMs) : null;
+    stock.freshness = asset.freshness || "unknown";
+    stock.tradable = asset.tradable === true;
     stock.entry = setup.entry;
     stock.targets = setup.targets;
     stock.stop = setup.stop;
@@ -230,7 +268,7 @@ function mergeLiveAssets(assets, updatedAt) {
     stock.risk = setup.risk;
     stock.live = asset.live !== false;
     if (stock.live) stock.updatedAt = updatedAt;
-    stock.reason = `${asset.sourceLabel || "Live data"} อัปเดตราคา ${formatUsd(price)} (${stock.change >= 0 ? "+" : ""}${stock.change.toFixed(2)}%) ระบบสแกน 50 ตัวและทยอยอัปเดต live batch ละ ${LIVE_BATCH_SIZE} ตัวเพื่อให้เหมาะกับ API ฟรี พร้อมใช้ข่าวประกอบก่อนตัดสินใจ`;
+    stock.reason = `${asset.sourceLabel || "Live data"} อัปเดตราคา ${formatUsd(price)} (${stock.change >= 0 ? "+" : ""}${stock.change.toFixed(2)}%) · ${getFreshnessLabel(stock)} · ${getQuoteText(stock)} ก่อนซื้อขายเงินจริงควรยืนยันราคากับ broker และใช้ limit order เพื่อคุม slippage`;
   });
 }
 
@@ -240,7 +278,9 @@ function setDataMode(mode, updatedAt, meta = {}) {
 
   if (mode === "live") {
     const batchText = meta.batchText || liveBatchText;
-    badge.textContent = updatedAt ? `Live Data ${batchText} · ${updatedAt}` : `Live Data ${batchText}`;
+    const provider = meta.providerText || marketProviderText;
+    const freshText = meta.freshness ? ` · fresh ${meta.freshness.fresh}/${batchText.split("/")[0]}` : "";
+    badge.textContent = updatedAt ? `${provider} ${batchText}${freshText} · ${updatedAt}` : `${provider} ${batchText}${freshText}`;
     badge.classList.add("ready");
     return;
   }
@@ -282,6 +322,7 @@ function getBatchProgress(payload) {
     progress: Math.max(0, Math.min(100, (scannedCount / universeSize) * 100)),
     symbols: payload.liveBatch?.symbols || [],
     updatedAt: normalizeUpdatedAt(payload.updatedAt),
+    freshness: payload.freshness || scanState.freshness,
   };
 }
 
@@ -294,7 +335,7 @@ function renderScanStatus() {
   scanUpdatedLabel.textContent = scanState.updatedAt ? `อัปเดต ${scanState.updatedAt}` : "รอข้อมูล";
   scanProgressBar.style.width = `${scanState.progress}%`;
   scanBatchSymbols.textContent = scanState.symbols.length
-    ? `Batch ปัจจุบัน: ${scanState.symbols.join(", ")}`
+    ? `Batch ปัจจุบัน: ${scanState.symbols.join(", ")} · fresh ${scanState.freshness.fresh || 0} · stale ${scanState.freshness.stale || 0}`
     : "ระบบจะทยอยสแกนตามข้อจำกัด API ฟรี";
 }
 
@@ -303,13 +344,14 @@ function formatStockUpdatedAt(value) {
 }
 
 function getStockScanClass(stock) {
+  if (stock.freshness === "stale") return " stale";
   if (stock.live) return " live";
   if (stock.updatedAt) return " updated";
   return "";
 }
 
 function getStockScanText(stock) {
-  if (stock.live) return "Live now";
+  if (stock.live) return getFreshnessLabel(stock);
   return formatStockUpdatedAt(stock.updatedAt);
 }
 
@@ -329,10 +371,11 @@ async function loadLiveData({ manual = false } = {}) {
 
     if (!response.ok) throw new Error(`API ${response.status}`);
     const payload = await response.json();
-    liveDataMode = payload.provider?.market === "twelvedata";
+    liveDataMode = payload.provider?.market !== "demo";
     scanState = getBatchProgress(payload);
     scanBatchOffset = Number.isFinite(payload.nextOffset) ? payload.nextOffset : (scanBatchOffset + LIVE_BATCH_SIZE) % SCAN_UNIVERSE.length;
     liveBatchText = payload.liveBatch?.size ? `${payload.liveBatch.size}/${payload.universeSize || SCAN_UNIVERSE.length}` : `0/${SCAN_UNIVERSE.length}`;
+    marketProviderText = payload.provider?.marketProviders?.length ? payload.provider.marketProviders.join("+") : payload.provider?.market || "Fallback";
 
     if (Array.isArray(payload.assets) && payload.assets.length > 0) {
       mergeLiveAssets(payload.assets, scanState.updatedAt);
@@ -342,14 +385,18 @@ async function loadLiveData({ manual = false } = {}) {
       newsItems = payload.news;
     }
 
-    setDataMode(payload.mode, normalizeUpdatedAt(payload.updatedAt), { batchText: liveBatchText });
+    setDataMode(payload.mode, normalizeUpdatedAt(payload.updatedAt), {
+      batchText: liveBatchText,
+      providerText: marketProviderText,
+      freshness: payload.freshness,
+    });
     renderScanStatus();
     renderStocks();
     renderNews();
     renderSelectedStock();
 
     if (manual) {
-      showToast(liveDataMode ? `สแกนข้อมูลจริง batch ${liveBatchText} แล้ว` : "ยังไม่ได้ตั้งค่า API secret จึงใช้ข้อมูลสำรอง");
+      showToast(liveDataMode ? `สแกน ${marketProviderText} batch ${liveBatchText} แล้ว` : "ยังไม่ได้ตั้งค่า API secret จึงใช้ข้อมูลสำรอง");
     }
   } catch (error) {
     liveDataMode = false;
@@ -554,4 +601,4 @@ setDataMode("demo");
 renderScanStatus();
 loadLiveData();
 window.setInterval(simulateTick, 4200);
-window.setInterval(loadLiveData, 90000);
+window.setInterval(loadLiveData, LIVE_REFRESH_MS);
